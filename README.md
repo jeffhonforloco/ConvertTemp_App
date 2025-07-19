@@ -1,73 +1,115 @@
-# Welcome to your Lovable project
+# 🌡️ ConvertTemp.com — Smart & Instant Temperature Converter
 
-## Project info
+**ConvertTemp** is a blazing-fast, SEO-optimized, single-page temperature converter built with **React + Vite + Tailwind CSS**. It supports intelligent conversion between Celsius, Fahrenheit, Kelvin, and Rankine, with a minimal design, dark mode, copy-to-clipboard, and region-aware behavior.
 
-**URL**: https://lovable.dev/projects/5fb0fd8c-0272-45c5-8830-a21506b22426
+> ✅ Live Now: [www.ConvertTemp.com](https://www.converttemp.com)
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## ✅ Features
 
-**Use Lovable**
+### ⚙️ Core Functionality
+- Convert °C, °F, K, and °R instantly
+- Smart input detection and two-way conversion
+- One-click **copy to clipboard**
+- Clean, modern UI with debounced input
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/5fb0fd8c-0272-45c5-8830-a21506b22426) and start prompting.
+### 🎨 UI/UX & Accessibility
+- Built with **Tailwind CSS**
+- Fully responsive and mobile-friendly
+- **Dark mode** with toggle + auto system detection
 
-Changes made via Lovable will be committed automatically to this repo.
+### 🌐 Globalized & Extensible
+- Auto-detect browser language (prep for i18n)
+- Region-based defaults (°F for US, °C elsewhere)
+- Scalable design to support more units later (e.g., Réaumur, Newton)
 
-**Use your preferred IDE**
+### 🚀 SEO & PWA-Ready
+- `robots.txt` and `sitemap.xml` included
+- Custom **OG Image**, **favicon**, and full meta tags
+- Progressive Web App (PWA) support (scoped)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### 📊 Analytics & Monetization
+- PostHog or Plausible ready (usage tracking)
+- Layout optimized for **high CTR AdSense zones**
+- Future-ready for affiliate embeds or Pro tools
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+## 🛠️ Tech Stack
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+- **Frontend:** [React](https://reactjs.org/)
+- **Bundler:** [Vite](https://vitejs.dev/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **Hosting:** [Vercel](https://vercel.com/) or [lovable.dev](https://lovable.dev/)
+- **Analytics:** PostHog or Plausible (optional)
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+---
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 📁 Folder Structure
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+```bash
+src/
+├─ components/
+│  ├─ Converter.tsx
+│  ├─ ThemeToggle.tsx
+│  └─ Meta.tsx
+├─ assets/
+│  └─ favicon.svg / og-image.png
+├─ App.tsx
+├─ main.tsx
+├─ index.css
+├─ i18n/ (scoped)
+public/
+├─ favicon.ico
+├─ sitemap.xml
+├─ robots.txt
+├─ manifest.json (PWA-ready)
+vite.config.ts
 
-**Edit a file directly in GitHub**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+🚀 Getting Started
 
-**Use GitHub Codespaces**
+# 1. Clone the repo
+git clone https://github.com/YOUR_USERNAME/ConvertTemp.git
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# 2. Install dependencies
+cd ConvertTemp
+pnpm install
 
-## What technologies are used for this project?
+# 3. Start the development server
+pnpm dev
 
-This project is built with:
+Then go to: http://localhost:5173
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+🔧 Build for Production
 
-## How can I deploy this project?
+pnpm build
+pnpm preview
+📌 Roadmap
 
-Simply open [Lovable](https://lovable.dev/projects/5fb0fd8c-0272-45c5-8830-a21506b22426) and click on Share -> Publish.
+ Language toggle & i18n
+ Add unit conversion types (length, weight, volume)
+ Export conversions (PDF/CSV)
+ Pro version with user history & cloud sync
+ Full PWA with offline support
+📄 License
 
-## Can I connect a custom domain to my Lovable project?
+MIT License — open source, free to use, contribute, remix.
 
-Yes, you can!
+👤 Author
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+Built with 💙 by @jeffhonforloco
+→ Follow for more tools like this!
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+---
+
+Let me know if you'd like:
+
+- Badges for GitHub (live preview, license, deploy status)
+- Screenshot preview banner for GitHub
+- A `vercel.json` or `netlify.toml` for CI/CD
+
+Happy to prep those too.
+
