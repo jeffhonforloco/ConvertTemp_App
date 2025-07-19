@@ -16,8 +16,8 @@ class AnalyticsService {
   private userId: string | null = null;
 
   constructor() {
-    // Initialize analytics if PostHog is available
-    this.isEnabled = typeof window !== 'undefined' && Boolean(process.env.NEXT_PUBLIC_POSTHOG_KEY);
+    // Initialize analytics if PostHog key is available
+    this.isEnabled = typeof window !== 'undefined' && Boolean(import.meta.env.VITE_POSTHOG_KEY);
     this.generateUserId();
   }
 
@@ -129,5 +129,5 @@ export const trackPageView = analytics.trackPageView.bind(analytics);
 
 // Initialize analytics with PostHog key (set in environment)
 if (typeof window !== 'undefined') {
-  analytics.init(process.env.NEXT_PUBLIC_POSTHOG_KEY);
+  analytics.init(import.meta.env.VITE_POSTHOG_KEY);
 }
