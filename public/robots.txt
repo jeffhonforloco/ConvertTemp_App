@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://converttemp.com/sitemap.xml
+Sitemap: https://www.converttemp.com/sitemap.xml
