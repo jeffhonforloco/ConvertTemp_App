@@ -40,6 +40,22 @@ class AnalyticsService {
     toValue: number;
     method: 'manual' | 'smart_input';
   }) {
+    // Store in mock analytics
+    if (typeof window !== 'undefined') {
+      const { mockAnalytics } = require('./mock-analytics');
+      mockAnalytics.logConversion({
+        fromUnit: data.fromUnit,
+        toUnit: data.toUnit,
+        fromValue: data.fromValue,
+        toValue: data.toValue,
+        method: data.method,
+        userId: this.userId || 'anonymous',
+        sessionId: this.getSessionId(),
+        userAgent: navigator.userAgent,
+        locale: navigator.language,
+      });
+    }
+
     this.track('temperature_conversion', {
       from_unit: data.fromUnit,
       to_unit: data.toUnit,
