@@ -132,3 +132,73 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Enhanced animations for temperature converter */
+@layer components {
+  .animate-temp-pulse {
+    animation: temp-pulse 2s ease-in-out infinite;
+  }
+
+  .animate-slide-right {
+    animation: slide-right 1s ease-out;
+  }
+
+  .bg-gradient-temp {
+    background: var(--gradient-temp);
+  }
+
+  .shadow-temp {
+    box-shadow: var(--shadow-temp);
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+
+  kbd {
+    @apply inline-block px-2 py-1 text-xs font-mono font-medium rounded border border-border bg-muted;
+  }
+}
+
+@layer utilities {
+  /* Temperature conversion animations */
+  @keyframes temp-pulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.02);
+      opacity: 0.95;
+    }
+  }
+
+  @keyframes slide-right {
+    0% {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out;
+  }
+}
