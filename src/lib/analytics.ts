@@ -1,6 +1,11 @@
 // Analytics utilities for ConvertTemp - Supabase integration
 import { supabase } from '@/integrations/supabase/client';
 
+// Get current auth user if available
+const getCurrentAuthUser = () => {
+  return supabase.auth.getUser().then(({ data: { user } }) => user);
+};
+
 export interface AnalyticsEvent {
   event: string;
   properties?: Record<string, any>;
@@ -40,10 +45,13 @@ class AnalyticsService {
     method: 'manual' | 'smart_input';
   }) {
     try {
+      const authUser = await getCurrentAuthUser();
+      
       // Store in Supabase
       await supabase.from('conversion_events').insert({
         user_id: this.userId || 'anonymous',
         session_id: this.getSessionId(),
+        auth_user_id: authUser?.id || null,
         from_unit: data.fromUnit,
         to_unit: data.toUnit,
         from_value: data.fromValue,
@@ -69,9 +77,12 @@ class AnalyticsService {
   // Track user interactions
   async trackInteraction(action: string, data?: Record<string, any>) {
     try {
+      const authUser = await getCurrentAuthUser();
+      
       await supabase.from('interaction_events').insert({
         user_id: this.userId || 'anonymous',
         session_id: this.getSessionId(),
+        auth_user_id: authUser?.id || null,
         action,
         properties: data || {},
       });
@@ -89,9 +100,12 @@ class AnalyticsService {
   // Track page views and sessions
   async trackPageView(page: string) {
     try {
+      const authUser = await getCurrentAuthUser();
+      
       await supabase.from('page_view_events').insert({
         user_id: this.userId || 'anonymous',
         session_id: this.getSessionId(),
+        auth_user_id: authUser?.id || null,
         page,
         user_agent: navigator.userAgent,
         locale: navigator.language,

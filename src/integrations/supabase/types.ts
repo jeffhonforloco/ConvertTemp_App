@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       conversion_events: {
         Row: {
+          auth_user_id: string | null
           created_at: string
           from_unit: string
           from_value: number
@@ -29,6 +30,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          auth_user_id?: string | null
           created_at?: string
           from_unit: string
           from_value: number
@@ -42,6 +44,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          auth_user_id?: string | null
           created_at?: string
           from_unit?: string
           from_value?: number
@@ -59,6 +62,7 @@ export type Database = {
       interaction_events: {
         Row: {
           action: string
+          auth_user_id: string | null
           created_at: string
           id: string
           properties: Json | null
@@ -67,6 +71,7 @@ export type Database = {
         }
         Insert: {
           action: string
+          auth_user_id?: string | null
           created_at?: string
           id?: string
           properties?: Json | null
@@ -75,6 +80,7 @@ export type Database = {
         }
         Update: {
           action?: string
+          auth_user_id?: string | null
           created_at?: string
           id?: string
           properties?: Json | null
@@ -85,6 +91,7 @@ export type Database = {
       }
       page_view_events: {
         Row: {
+          auth_user_id: string | null
           created_at: string
           id: string
           locale: string | null
@@ -96,6 +103,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          auth_user_id?: string | null
           created_at?: string
           id?: string
           locale?: string | null
@@ -107,6 +115,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          auth_user_id?: string | null
           created_at?: string
           id?: string
           locale?: string | null
@@ -119,15 +128,45 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: {
+        Args: { user_id?: string }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      user_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -254,6 +293,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_role: ["admin", "user"],
+    },
   },
 } as const

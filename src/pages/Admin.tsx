@@ -1,95 +1,83 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { UserManagement } from '@/components/UserManagement';
 import { AdminDashboard } from '@/components/AdminDashboard';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Shield, Eye, EyeOff } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Shield, LogOut, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 
-// Simple admin auth (replace with proper auth when Supabase is connected)
-const ADMIN_PASSWORD = 'admin123'; // In production, this would be properly secured
-
 export default function Admin() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const { user, profile, isAdmin, signOut, loading } = useAuth();
+  const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check if already authenticated in this session
-    const authStatus = sessionStorage.getItem('admin_authenticated');
-    if (authStatus === 'true') {
-      setIsAuthenticated(true);
+    // Redirect to auth if not logged in
+    if (!loading && !user) {
+      navigate('/auth');
     }
-  }, []);
+  }, [user, loading, navigate]);
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (password === ADMIN_PASSWORD) {
-      setIsAuthenticated(true);
-      sessionStorage.setItem('admin_authenticated', 'true');
+  const handleLogout = async () => {
+    const { error } = await signOut();
+    if (error) {
       toast({
-        title: "Access granted",
-        description: "Welcome to the admin dashboard",
+        title: "Error",
+        description: "Failed to sign out",
+        variant: "destructive",
       });
     } else {
       toast({
-        title: "Access denied",
-        description: "Invalid password",
-        variant: "destructive",
+        title: "Signed out",
+        description: "You have been signed out successfully",
       });
+      navigate('/');
     }
   };
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    sessionStorage.removeItem('admin_authenticated');
-    setPassword('');
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
-  if (!isAuthenticated) {
+  if (!user) {
+    return null; // Will redirect in useEffect
+  }
+
+  // If user is not admin, show access denied
+  if (!isAdmin) {
     return (
       <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
-              <Shield className="w-6 h-6 text-primary-foreground" />
+            <div className="w-12 h-12 bg-destructive rounded-full flex items-center justify-center mx-auto mb-4">
+              <Shield className="w-6 h-6 text-destructive-foreground" />
             </div>
-            <CardTitle>Admin Access</CardTitle>
+            <CardTitle>Access Denied</CardTitle>
             <CardDescription>
-              Enter the admin password to access the dashboard
+              You don't have administrator privileges to access this page.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div className="relative">
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter admin password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pr-10"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-0 h-full px-3"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </Button>
-              </div>
-              <Button type="submit" className="w-full">
-                Access Dashboard
+          <CardContent className="space-y-4">
+            <div className="text-center text-sm text-muted-foreground">
+              <p>Current role: <span className="font-medium">{profile?.role}</span></p>
+              <p>Email: <span className="font-medium">{profile?.email}</span></p>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => navigate('/')} className="flex-1">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Go Home
               </Button>
-            </form>
-            
-            <div className="mt-6 p-3 bg-muted rounded-lg text-sm text-muted-foreground">
-              <p className="font-medium mb-1">Demo Access:</p>
-              <p>Password: <code className="bg-background px-1 rounded">admin123</code></p>
-              <p className="text-xs mt-1">In production, this would use proper authentication</p>
+              <Button variant="outline" onClick={handleLogout} className="flex-1">
+                <LogOut className="w-4 h-4 mr-2" />
+                Sign Out
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -104,17 +92,40 @@ export default function Admin() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Shield className="w-6 h-6 text-primary" />
-            <h1 className="text-xl font-semibold">ConvertTemp Admin</h1>
+            <div>
+              <h1 className="text-xl font-semibold">ConvertTemp Admin</h1>
+              <p className="text-sm text-muted-foreground">Welcome, {profile?.full_name || profile?.email}</p>
+            </div>
           </div>
-          <Button variant="outline" onClick={handleLogout}>
-            Logout
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => navigate('/')} size="sm">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to App
+            </Button>
+            <Button variant="outline" onClick={handleLogout} size="sm">
+              <LogOut className="w-4 h-4 mr-2" />
+              Sign Out
+            </Button>
+          </div>
         </div>
       </header>
 
       {/* Dashboard Content */}
       <main className="container mx-auto px-4 py-8">
-        <AdminDashboard />
+        <Tabs defaultValue="analytics" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="users">User Management</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="analytics">
+            <AdminDashboard />
+          </TabsContent>
+
+          <TabsContent value="users">
+            <UserManagement />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );

@@ -1,15 +1,24 @@
 import { useEffect } from 'react';
-import { Thermometer, Github, Heart } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Thermometer, Github, Heart, LogIn, Shield, User, LogOut } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { TemperatureConverter } from '@/components/TemperatureConverter';
 import { SEOHead } from '@/components/SEOHead';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { useAuth } from '@/contexts/AuthContext';
 import { trackPageView } from '@/lib/analytics';
 import heroImage from '@/assets/hero-image.jpg';
 
 const Index = () => {
+  const { user, profile, isAdmin, signOut } = useAuth();
+
   useEffect(() => {
     trackPageView('homepage');
   }, []);
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
   return (
     <div className="min-h-screen bg-gradient-hero">
@@ -24,7 +33,37 @@ const Index = () => {
               ConvertTemp
             </h1>
           </div>
-          <ThemeToggle />
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            {user ? (
+              <div className="flex items-center gap-2">
+                <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-background/10 backdrop-blur-sm rounded-full border border-white/20">
+                  <User className="w-4 h-4" />
+                  <span className="text-sm">{profile?.full_name || profile?.email}</span>
+                  {isAdmin && <Shield className="w-4 h-4 text-primary" />}
+                </div>
+                {isAdmin && (
+                  <Button asChild variant="outline" size="sm">
+                    <Link to="/admin">
+                      <Shield className="w-4 h-4 mr-2" />
+                      Admin
+                    </Link>
+                  </Button>
+                )}
+                <Button variant="outline" size="sm" onClick={handleSignOut}>
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign Out
+                </Button>
+              </div>
+            ) : (
+              <Button asChild variant="outline" size="sm">
+                <Link to="/auth">
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Sign In
+                </Link>
+              </Button>
+            )}
+          </div>
         </div>
       </header>
 
