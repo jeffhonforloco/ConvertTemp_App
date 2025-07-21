@@ -1,4 +1,5 @@
-// Analytics utilities for ConvertTemp - PostHog integration ready
+// Analytics utilities for ConvertTemp - Supabase integration
+import { supabase } from '@/integrations/supabase/client';
 
 export interface AnalyticsEvent {
   event: string;
@@ -10,14 +11,12 @@ export interface AnalyticsEvent {
   };
 }
 
-// Mock analytics for development - replace with actual PostHog in production
+// Analytics service using Supabase for data persistence
 class AnalyticsService {
-  private isEnabled: boolean = false;
+  private isEnabled: boolean = true; // Always enabled with Supabase
   private userId: string | null = null;
 
   constructor() {
-    // Initialize analytics if PostHog key is available
-    this.isEnabled = typeof window !== 'undefined' && Boolean(import.meta.env.VITE_POSTHOG_KEY);
     this.generateUserId();
   }
 
@@ -33,27 +32,28 @@ class AnalyticsService {
   }
 
   // Track conversion events
-  trackConversion(data: {
+  async trackConversion(data: {
     fromUnit: string;
     toUnit: string;
     fromValue: number;
     toValue: number;
     method: 'manual' | 'smart_input';
   }) {
-    // Store in mock analytics
-    if (typeof window !== 'undefined') {
-      const { mockAnalytics } = require('./mock-analytics');
-      mockAnalytics.logConversion({
-        fromUnit: data.fromUnit,
-        toUnit: data.toUnit,
-        fromValue: data.fromValue,
-        toValue: data.toValue,
+    try {
+      // Store in Supabase
+      await supabase.from('conversion_events').insert({
+        user_id: this.userId || 'anonymous',
+        session_id: this.getSessionId(),
+        from_unit: data.fromUnit,
+        to_unit: data.toUnit,
+        from_value: data.fromValue,
+        to_value: data.toValue,
         method: data.method,
-        userId: this.userId || 'anonymous',
-        sessionId: this.getSessionId(),
-        userAgent: navigator.userAgent,
+        user_agent: navigator.userAgent,
         locale: navigator.language,
       });
+    } catch (error) {
+      console.warn('Failed to track conversion:', error);
     }
 
     this.track('temperature_conversion', {
@@ -67,7 +67,18 @@ class AnalyticsService {
   }
 
   // Track user interactions
-  trackInteraction(action: string, data?: Record<string, any>) {
+  async trackInteraction(action: string, data?: Record<string, any>) {
+    try {
+      await supabase.from('interaction_events').insert({
+        user_id: this.userId || 'anonymous',
+        session_id: this.getSessionId(),
+        action,
+        properties: data || {},
+      });
+    } catch (error) {
+      console.warn('Failed to track interaction:', error);
+    }
+
     this.track('user_interaction', {
       action,
       ...data,
@@ -76,7 +87,21 @@ class AnalyticsService {
   }
 
   // Track page views and sessions
-  trackPageView(page: string) {
+  async trackPageView(page: string) {
+    try {
+      await supabase.from('page_view_events').insert({
+        user_id: this.userId || 'anonymous',
+        session_id: this.getSessionId(),
+        page,
+        user_agent: navigator.userAgent,
+        locale: navigator.language,
+        url: window.location.href,
+        referrer: document.referrer,
+      });
+    } catch (error) {
+      console.warn('Failed to track page view:', error);
+    }
+
     this.track('page_view', {
       page,
       user_agent: navigator.userAgent,
@@ -120,15 +145,13 @@ class AnalyticsService {
     return sessionId;
   }
 
-  // Initialize PostHog (call this in your app initialization)
-  init(apiKey?: string) {
-    if (typeof window === 'undefined' || !apiKey) return;
+  // Initialize analytics (call this in your app initialization)
+  init() {
+    if (typeof window === 'undefined') return;
 
     try {
-      // PostHog would be imported here in production
-      // For now, we'll use mock analytics
-      console.log('📊 Analytics ready (mock mode)');
-      this.isEnabled = false; // Keep as mock for now
+      console.log('📊 Analytics ready (Supabase mode)');
+      this.isEnabled = true;
     } catch (error) {
       console.warn('Failed to initialize analytics:', error);
     }
@@ -143,7 +166,7 @@ export const trackConversion = analytics.trackConversion.bind(analytics);
 export const trackInteraction = analytics.trackInteraction.bind(analytics);
 export const trackPageView = analytics.trackPageView.bind(analytics);
 
-// Initialize analytics with PostHog key (set in environment)
+// Initialize analytics with Supabase
 if (typeof window !== 'undefined') {
-  analytics.init(import.meta.env.VITE_POSTHOG_KEY);
+  analytics.init();
 }

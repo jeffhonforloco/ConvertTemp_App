@@ -14,7 +14,111 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      conversion_events: {
+        Row: {
+          created_at: string
+          from_unit: string
+          from_value: number
+          id: string
+          locale: string | null
+          method: string
+          session_id: string
+          to_unit: string
+          to_value: number
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          from_unit: string
+          from_value: number
+          id?: string
+          locale?: string | null
+          method: string
+          session_id: string
+          to_unit: string
+          to_value: number
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          from_unit?: string
+          from_value?: number
+          id?: string
+          locale?: string | null
+          method?: string
+          session_id?: string
+          to_unit?: string
+          to_value?: number
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      interaction_events: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          properties: Json | null
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          properties?: Json | null
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          properties?: Json | null
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      page_view_events: {
+        Row: {
+          created_at: string
+          id: string
+          locale: string | null
+          page: string
+          referrer: string | null
+          session_id: string
+          url: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          locale?: string | null
+          page: string
+          referrer?: string | null
+          session_id: string
+          url?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          locale?: string | null
+          page?: string
+          referrer?: string | null
+          session_id?: string
+          url?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
