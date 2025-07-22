@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { TemperatureConverter } from '@/components/TemperatureConverter';
 import { SEOHead } from '@/components/SEOHead';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { AdSlot } from '@/components/AdSlot';
 import { useAuth } from '@/contexts/AuthContext';
 import { trackPageView } from '@/lib/analytics';
 import heroImage from '@/assets/hero-image.jpg';
@@ -94,8 +95,14 @@ const Index = () => {
           </p>
         </div>
 
+        {/* Top Banner Ad */}
+        <AdSlot slotType="banner_top" className="mb-8" />
+
         {/* Converter Component */}
         <TemperatureConverter />
+
+        {/* In-content Ad */}
+        <AdSlot slotType="in_content" className="mt-8" />
 
         {/* Features */}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
@@ -131,8 +138,11 @@ const Index = () => {
         </div>
       </main>
 
+      {/* Bottom Banner Ad */}
+      <AdSlot slotType="banner_bottom" className="mt-16" />
+
       {/* Footer */}
-      <footer className="border-t mt-16">
+      <footer className="border-t mt-8">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center text-sm text-muted-foreground">
             <p className="mb-2">

@@ -14,6 +14,124 @@ export type Database = {
   }
   public: {
     Tables: {
+      ad_networks: {
+        Row: {
+          api_key: string | null
+          created_at: string
+          id: string
+          is_active: boolean | null
+          name: string
+          network_type: Database["public"]["Enums"]["ad_network_type"]
+          publisher_id: string | null
+          revenue_share: number | null
+          updated_at: string
+        }
+        Insert: {
+          api_key?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          network_type: Database["public"]["Enums"]["ad_network_type"]
+          publisher_id?: string | null
+          revenue_share?: number | null
+          updated_at?: string
+        }
+        Update: {
+          api_key?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          network_type?: Database["public"]["Enums"]["ad_network_type"]
+          publisher_id?: string | null
+          revenue_share?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ad_revenue: {
+        Row: {
+          clicks: number | null
+          cpc: number | null
+          cpm: number | null
+          created_at: string
+          date: string
+          id: string
+          impressions: number | null
+          network_id: string | null
+          revenue: number | null
+        }
+        Insert: {
+          clicks?: number | null
+          cpc?: number | null
+          cpm?: number | null
+          created_at?: string
+          date: string
+          id?: string
+          impressions?: number | null
+          network_id?: string | null
+          revenue?: number | null
+        }
+        Update: {
+          clicks?: number | null
+          cpc?: number | null
+          cpm?: number | null
+          created_at?: string
+          date?: string
+          id?: string
+          impressions?: number | null
+          network_id?: string | null
+          revenue?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_revenue_network_id_fkey"
+            columns: ["network_id"]
+            isOneToOne: false
+            referencedRelation: "ad_networks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ad_slots: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean | null
+          network_id: string | null
+          size: string | null
+          slot_id: string
+          slot_type: Database["public"]["Enums"]["ad_slot_type"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          network_id?: string | null
+          size?: string | null
+          slot_id: string
+          slot_type: Database["public"]["Enums"]["ad_slot_type"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          network_id?: string | null
+          size?: string | null
+          slot_id?: string
+          slot_type?: Database["public"]["Enums"]["ad_slot_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_slots_network_id_fkey"
+            columns: ["network_id"]
+            isOneToOne: false
+            referencedRelation: "ad_networks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversion_events: {
         Row: {
           auth_user_id: string | null
@@ -155,6 +273,81 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_limits: {
+        Row: {
+          created_at: string
+          endpoint: string
+          id: string
+          ip_address: unknown
+          requests_count: number | null
+          window_start: string
+        }
+        Insert: {
+          created_at?: string
+          endpoint: string
+          id?: string
+          ip_address: unknown
+          requests_count?: number | null
+          window_start?: string
+        }
+        Update: {
+          created_at?: string
+          endpoint?: string
+          id?: string
+          ip_address?: unknown
+          requests_count?: number | null
+          window_start?: string
+        }
+        Relationships: []
+      }
+      seo_pages: {
+        Row: {
+          canonical_url: string | null
+          created_at: string
+          description: string
+          id: string
+          is_active: boolean | null
+          keywords: string[] | null
+          og_description: string | null
+          og_image: string | null
+          og_title: string | null
+          path: string
+          schema_markup: Json | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          canonical_url?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          is_active?: boolean | null
+          keywords?: string[] | null
+          og_description?: string | null
+          og_image?: string | null
+          og_title?: string | null
+          path: string
+          schema_markup?: Json | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          canonical_url?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          is_active?: boolean | null
+          keywords?: string[] | null
+          og_description?: string | null
+          og_image?: string | null
+          og_title?: string | null
+          path?: string
+          schema_markup?: Json | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -166,6 +359,12 @@ export type Database = {
       }
     }
     Enums: {
+      ad_network_type:
+        | "google_adsense"
+        | "media_net"
+        | "propeller_ads"
+        | "ezoic"
+      ad_slot_type: "banner_top" | "banner_bottom" | "sidebar" | "in_content"
       user_role: "admin" | "user"
     }
     CompositeTypes: {
@@ -294,6 +493,13 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      ad_network_type: [
+        "google_adsense",
+        "media_net",
+        "propeller_ads",
+        "ezoic",
+      ],
+      ad_slot_type: ["banner_top", "banner_bottom", "sidebar", "in_content"],
       user_role: ["admin", "user"],
     },
   },

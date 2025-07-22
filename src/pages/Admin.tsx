@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserManagement } from '@/components/UserManagement';
 import { AdminDashboard } from '@/components/AdminDashboard';
+import { AdNetworkManagement } from '@/components/AdNetworkManagement';
+import { SEOManagement } from '@/components/SEOManagement';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -116,6 +118,8 @@ export default function Admin() {
           <TabsList>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="users">User Management</TabsTrigger>
+            <TabsTrigger value="ads">Ad Networks</TabsTrigger>
+            <TabsTrigger value="seo">SEO Management</TabsTrigger>
           </TabsList>
 
           <TabsContent value="analytics">
@@ -124,6 +128,14 @@ export default function Admin() {
 
           <TabsContent value="users">
             <UserManagement />
+          </TabsContent>
+
+          <TabsContent value="ads">
+            <AdNetworkManagement />
+          </TabsContent>
+
+          <TabsContent value="seo">
+            <SEOManagement />
           </TabsContent>
         </Tabs>
       </main>
