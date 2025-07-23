@@ -19,17 +19,18 @@ const Index = () => {
       
       {/* Header */}
       <header className="container mx-auto px-4 py-6">
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img 
               src={convertTempLogo} 
               alt="ConvertTemp Logo" 
-              className="w-12 h-12"
+              className="w-10 h-10 sm:w-12 sm:h-12 brightness-0 dark:brightness-100 dark:invert"
             />
-            <div className="flex items-center gap-2">
-              <ThemeToggle />
-            </div>
+            <h1 className="text-xl sm:text-2xl font-bold bg-gradient-temp bg-clip-text text-transparent">
+              ConvertTemp
+            </h1>
           </div>
+          <ThemeToggle />
         </div>
       </header>
 
@@ -69,11 +70,10 @@ const Index = () => {
         {/* In-content Ad */}
         <AdSlot slotType="in_content" className="mt-8" />
 
-        {/* Features */}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
-          <div className="text-center p-6">
-            <div className="w-12 h-12 bg-gradient-cold rounded-full flex items-center justify-center mx-auto mb-4">
-              <Thermometer className="w-6 h-6 text-white" />
+          <div className="text-center p-6 animate-fade-in">
+            <div className="w-12 h-12 bg-gradient-cold rounded-full flex items-center justify-center mx-auto mb-4 hover-scale animate-pulse">
+              <Thermometer className="w-6 h-6 text-white animate-[pulse_2s_ease-in-out_infinite]" />
             </div>
             <h3 className="text-lg font-semibold mb-2">Smart Input Detection</h3>
             <p className="text-muted-foreground text-sm">
@@ -81,9 +81,9 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="text-center p-6">
-            <div className="w-12 h-12 bg-gradient-temp rounded-full flex items-center justify-center mx-auto mb-4">
-              <Heart className="w-6 h-6 text-white" />
+          <div className="text-center p-6 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+            <div className="w-12 h-12 bg-gradient-temp rounded-full flex items-center justify-center mx-auto mb-4 hover-scale">
+              <Heart className="w-6 h-6 text-white animate-[pulse_3s_ease-in-out_infinite]" />
             </div>
             <h3 className="text-lg font-semibold mb-2">All Temperature Units</h3>
             <p className="text-muted-foreground text-sm">
@@ -91,9 +91,9 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="text-center p-6">
-            <div className="w-12 h-12 bg-gradient-hot rounded-full flex items-center justify-center mx-auto mb-4">
-              <Github className="w-6 h-6 text-white" />
+          <div className="text-center p-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <div className="w-12 h-12 bg-gradient-hot rounded-full flex items-center justify-center mx-auto mb-4 hover-scale animate-pulse">
+              <Github className="w-6 h-6 text-white animate-[pulse_2.5s_ease-in-out_infinite]" />
             </div>
             <h3 className="text-lg font-semibold mb-2">Lightning Fast</h3>
             <p className="text-muted-foreground text-sm">
@@ -101,9 +101,9 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="text-center p-6">
-            <div className="w-12 h-12 bg-gradient-temp rounded-full flex items-center justify-center mx-auto mb-4">
-              <Thermometer className="w-6 h-6 text-white" />
+          <div className="text-center p-6 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+            <div className="w-12 h-12 bg-gradient-temp rounded-full flex items-center justify-center mx-auto mb-4 hover-scale">
+              <Thermometer className="w-6 h-6 text-white animate-[pulse_1.8s_ease-in-out_infinite]" />
             </div>
             <h3 className="text-lg font-semibold mb-2">Mobile Optimized</h3>
             <p className="text-muted-foreground text-sm">
