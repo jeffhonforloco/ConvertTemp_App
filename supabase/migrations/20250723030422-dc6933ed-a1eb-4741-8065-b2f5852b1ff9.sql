@@ -1,0 +1,20 @@
+-- Update existing SEO data for ConvertTemp and add new pages
+UPDATE seo_pages 
+SET 
+  title = 'ConvertTemp - Free Temperature Converter Online | °C °F K °R',
+  description = 'Convert temperatures instantly between Celsius, Fahrenheit, Kelvin, and Rankine. Smart input detection, copy results, and mobile-optimized. 100% free temperature conversion tool for web and mobile.',
+  keywords = ARRAY['temperature converter', 'celsius to fahrenheit', 'fahrenheit to celsius', 'kelvin converter', 'rankine converter', 'temperature conversion calculator', 'free converter', 'online temperature tool', 'celsius fahrenheit calculator', 'temperature units', 'converttemp', 'temperature conversion online', 'free temperature calculator'],
+  canonical_url = 'https://converttemp.com',
+  og_title = 'ConvertTemp - Free Temperature Converter | Convert °C °F K °R',
+  og_description = 'The most accurate and fastest free temperature converter online. Convert between Celsius, Fahrenheit, Kelvin, and Rankine instantly. No registration required.'
+WHERE path = '/';
+
+-- Insert new SEO pages for specific conversion types
+INSERT INTO seo_pages (path, title, description, keywords, canonical_url, og_title, og_description, og_image, is_active) VALUES
+('/celsius-to-fahrenheit', 'Celsius to Fahrenheit Converter | Free °C to °F Calculator', 'Convert Celsius to Fahrenheit instantly with our free calculator. Formula: °F = (°C × 9/5) + 32. Accurate results for any temperature conversion from °C to °F.', ARRAY['celsius to fahrenheit', 'c to f converter', 'celsius fahrenheit calculator', 'temperature conversion', 'degrees celsius to fahrenheit', 'celsius fahrenheit formula'], 'https://converttemp.com/celsius-to-fahrenheit', 'Free Celsius to Fahrenheit Converter | °C to °F', 'Convert any Celsius temperature to Fahrenheit instantly. Free, accurate, and easy to use temperature converter.', '/og-image.png', true),
+
+('/fahrenheit-to-celsius', 'Fahrenheit to Celsius Converter | Free °F to °C Calculator', 'Convert Fahrenheit to Celsius instantly with our free calculator. Formula: °C = (°F - 32) × 5/9. Accurate results for any temperature conversion from °F to °C.', ARRAY['fahrenheit to celsius', 'f to c converter', 'fahrenheit celsius calculator', 'temperature conversion', 'degrees fahrenheit to celsius', 'fahrenheit celsius formula'], 'https://converttemp.com/fahrenheit-to-celsius', 'Free Fahrenheit to Celsius Converter | °F to °C', 'Convert any Fahrenheit temperature to Celsius instantly. Free, accurate, and easy to use temperature converter.', '/og-image.png', true),
+
+('/kelvin-converter', 'Kelvin Temperature Converter | Free K to °C °F Calculator', 'Convert Kelvin to Celsius, Fahrenheit, and Rankine instantly. Scientific temperature converter for absolute temperature scale conversions. Free and accurate.', ARRAY['kelvin converter', 'kelvin to celsius', 'kelvin to fahrenheit', 'absolute temperature', 'scientific temperature converter', 'thermodynamic temperature'], 'https://converttemp.com/kelvin-converter', 'Free Kelvin Temperature Converter | Scientific Tool', 'Convert Kelvin temperatures to Celsius, Fahrenheit, and Rankine. Perfect for scientific and engineering calculations.', '/og-image.png', true),
+
+('/rankine-converter', 'Rankine Temperature Converter | Free °R Calculator', 'Convert Rankine to other temperature units instantly. Free Rankine temperature converter for engineering and scientific applications. Accurate °R conversions.', ARRAY['rankine converter', 'rankine temperature', 'engineering temperature converter', 'thermodynamic scale', 'rankine to fahrenheit', 'rankine to celsius'], 'https://converttemp.com/rankine-converter', 'Free Rankine Temperature Converter | Engineering Tool', 'Convert Rankine temperatures for engineering applications. Free, accurate, and designed for professionals.', '/og-image.png', true);
