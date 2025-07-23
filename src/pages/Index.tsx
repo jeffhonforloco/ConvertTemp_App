@@ -1,25 +1,17 @@
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Thermometer, Github, Heart, LogIn, Shield, User, LogOut } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Thermometer, Github, Heart } from 'lucide-react';
 import { TemperatureConverter } from '@/components/TemperatureConverter';
 import { SEOHead } from '@/components/SEOHead';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { AdSlot } from '@/components/AdSlot';
-import { useAuth } from '@/contexts/AuthContext';
 import { trackPageView } from '@/lib/analytics';
 import heroImage from '@/assets/hero-image.jpg';
+import convertTempLogo from '@/assets/converttemp-logo.png';
 
 const Index = () => {
-  const { user, profile, isAdmin, signOut } = useAuth();
-
   useEffect(() => {
     trackPageView('homepage');
   }, []);
-
-  const handleSignOut = async () => {
-    await signOut();
-  };
 
   return (
     <div className="min-h-screen bg-gradient-hero">
@@ -27,43 +19,16 @@ const Index = () => {
       
       {/* Header */}
       <header className="container mx-auto px-4 py-6">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-center">
           <div className="flex items-center gap-3">
-            <Thermometer className="w-8 h-8 text-primary" />
-            <h1 className="text-2xl font-bold bg-gradient-temp bg-clip-text text-transparent">
-              ConvertTemp
-            </h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
-            {user ? (
-              <div className="flex items-center gap-2">
-                <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-background/10 backdrop-blur-sm rounded-full border border-white/20">
-                  <User className="w-4 h-4" />
-                  <span className="text-sm">{profile?.full_name || profile?.email}</span>
-                  {isAdmin && <Shield className="w-4 h-4 text-primary" />}
-                </div>
-                {isAdmin && (
-                  <Button asChild variant="outline" size="sm">
-                    <Link to="/admin">
-                      <Shield className="w-4 h-4 mr-2" />
-                      Admin
-                    </Link>
-                  </Button>
-                )}
-                <Button variant="outline" size="sm" onClick={handleSignOut}>
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Sign Out
-                </Button>
-              </div>
-            ) : (
-              <Button asChild variant="outline" size="sm">
-                <Link to="/auth">
-                  <LogIn className="w-4 h-4 mr-2" />
-                  Sign In
-                </Link>
-              </Button>
-            )}
+            <img 
+              src={convertTempLogo} 
+              alt="ConvertTemp Logo" 
+              className="w-12 h-12"
+            />
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </header>
@@ -79,19 +44,19 @@ const Index = () => {
             />
           </div>
           
-          <h2 className="text-4xl md:text-6xl font-bold mb-4">
-            Convert Temperatures
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">
+            Free Temperature Converter
             <span className="block text-3xl md:text-4xl bg-gradient-temp bg-clip-text text-transparent">
-              Instantly & Accurately
+              Celsius • Fahrenheit • Kelvin • Rankine
             </span>
-          </h2>
+          </h1>
           
           <p className="text-xl md:text-2xl text-muted-foreground mb-2 max-w-3xl mx-auto">
-            Convert between <strong>Celsius, Fahrenheit, Kelvin, and Rankine</strong> with smart input detection
+            Convert temperatures instantly with <strong>smart input detection</strong>. Works perfectly on any device.
           </p>
           
           <p className="text-sm text-muted-foreground mb-8">
-            Fast • Accurate • Mobile-Optimized • Free
+            100% Free • No Sign-up Required • Works Offline • Mobile App Available
           </p>
         </div>
 
@@ -105,14 +70,14 @@ const Index = () => {
         <AdSlot slotType="in_content" className="mt-8" />
 
         {/* Features */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
           <div className="text-center p-6">
             <div className="w-12 h-12 bg-gradient-cold rounded-full flex items-center justify-center mx-auto mb-4">
               <Thermometer className="w-6 h-6 text-white" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Smart Input</h3>
+            <h3 className="text-lg font-semibold mb-2">Smart Input Detection</h3>
             <p className="text-muted-foreground text-sm">
-              Type "100F" or "36C" and we'll auto-detect the unit
+              Type "100F", "36C", "273K" and we'll auto-detect the unit
             </p>
           </div>
           
@@ -120,9 +85,9 @@ const Index = () => {
             <div className="w-12 h-12 bg-gradient-temp rounded-full flex items-center justify-center mx-auto mb-4">
               <Heart className="w-6 h-6 text-white" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">All Units</h3>
+            <h3 className="text-lg font-semibold mb-2">All Temperature Units</h3>
             <p className="text-muted-foreground text-sm">
-              Celsius, Fahrenheit, Kelvin, and Rankine conversions
+              Celsius, Fahrenheit, Kelvin, and Rankine - complete coverage
             </p>
           </div>
           
@@ -132,8 +97,47 @@ const Index = () => {
             </div>
             <h3 className="text-lg font-semibold mb-2">Lightning Fast</h3>
             <p className="text-muted-foreground text-sm">
-              Instant conversions with copy-to-clipboard functionality
+              Instant conversions with one-click copy-to-clipboard
             </p>
+          </div>
+
+          <div className="text-center p-6">
+            <div className="w-12 h-12 bg-gradient-temp rounded-full flex items-center justify-center mx-auto mb-4">
+              <Thermometer className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">Mobile Optimized</h3>
+            <p className="text-muted-foreground text-sm">
+              Perfect on phones, tablets, and desktops. Works offline too!
+            </p>
+          </div>
+        </div>
+
+        {/* SEO Content Section */}
+        <div className="mt-16 max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-6">The Ultimate Temperature Conversion Tool</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+            <div>
+              <h3 className="text-xl font-semibold mb-3">Why Choose ConvertTemp?</h3>
+              <ul className="space-y-2 text-muted-foreground">
+                <li>• 100% free temperature converter - no hidden costs</li>
+                <li>• No registration or sign-up required</li>
+                <li>• Supports Celsius (°C), Fahrenheit (°F), Kelvin (K), and Rankine (°R)</li>
+                <li>• Smart input parsing - just type and convert</li>
+                <li>• Works perfectly on mobile devices and tablets</li>
+                <li>• Instant results with copy-to-clipboard feature</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-3">Common Temperature Conversions</h3>
+              <ul className="space-y-2 text-muted-foreground">
+                <li>• 0°C = 32°F (Water freezing point)</li>
+                <li>• 100°C = 212°F (Water boiling point)</li>
+                <li>• 37°C = 98.6°F (Human body temperature)</li>
+                <li>• -40°C = -40°F (Same temperature!)</li>
+                <li>• 273.15K = 0°C (Absolute zero in Celsius)</li>
+                <li>• 0K = -273.15°C (Absolute zero)</li>
+              </ul>
+            </div>
           </div>
         </div>
       </main>
@@ -145,11 +149,17 @@ const Index = () => {
       <footer className="border-t mt-8">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center text-sm text-muted-foreground">
+            <p className="mb-4">
+              <strong>ConvertTemp.com</strong> - The world's most accurate and fastest temperature converter
+            </p>
             <p className="mb-2">
-              Built for speed, accuracy & simplicity
+              Free online temperature conversion tool for Celsius, Fahrenheit, Kelvin, and Rankine
+            </p>
+            <p className="mb-4">
+              Perfect for students, engineers, scientists, and anyone who needs quick temperature conversions
             </p>
             <p>
-              © {new Date().getFullYear()} ConvertTemp • Made with ❤️ for temperature conversions
+              © {new Date().getFullYear()} ConvertTemp.com • Free Temperature Converter • No Registration Required
             </p>
           </div>
         </div>

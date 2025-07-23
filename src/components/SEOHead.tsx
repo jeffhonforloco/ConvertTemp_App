@@ -30,9 +30,9 @@ export function SEOHead({
   const [seoData, setSeoData] = useState<SEOData | null>(null);
 
   const defaultSEO = {
-    title: propTitle || "ConvertTemp - Fast Temperature Converter | °C ⇌ °F ⇌ K ⇌ °R",
-    description: propDescription || "Convert temperatures instantly between Celsius, Fahrenheit, Kelvin, and Rankine. Smart input detection, copy results, and mobile-optimized. Free temperature conversion tool.",
-    keywords: ['temperature converter', 'celsius to fahrenheit', 'fahrenheit to celsius', 'temperature conversion', 'free converter'],
+    title: propTitle || "ConvertTemp - Free Temperature Converter Online | °C °F K °R",
+    description: propDescription || "Convert temperatures instantly between Celsius, Fahrenheit, Kelvin, and Rankine. Smart input detection, copy results, and mobile-optimized. 100% free temperature conversion tool for web and mobile.",
+    keywords: ['temperature converter', 'celsius to fahrenheit', 'fahrenheit to celsius', 'kelvin converter', 'rankine converter', 'temperature conversion calculator', 'free converter', 'online temperature tool', 'celsius fahrenheit calculator', 'temperature units'],
     canonical_url: propCanonical || "https://converttemp.com",
     og_image: propOgImage || "/og-image.png"
   };
