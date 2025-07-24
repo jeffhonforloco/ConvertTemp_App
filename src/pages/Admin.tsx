@@ -4,6 +4,8 @@ import { UserManagement } from '@/components/UserManagement';
 import { AdminDashboard } from '@/components/AdminDashboard';
 import { AdNetworkManagement } from '@/components/AdNetworkManagement';
 import { SEOManagement } from '@/components/SEOManagement';
+import { AdminSettings } from '@/components/AdminSettings';
+import { AdminSystemHealth } from '@/components/AdminSystemHealth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -115,11 +117,13 @@ export default function Admin() {
       {/* Dashboard Content */}
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="analytics" className="space-y-6">
-          <TabsList>
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            <TabsTrigger value="users">User Management</TabsTrigger>
-            <TabsTrigger value="ads">Ad Networks</TabsTrigger>
-            <TabsTrigger value="seo">SEO Management</TabsTrigger>
+            <TabsTrigger value="users">Users</TabsTrigger>
+            <TabsTrigger value="ads">Ads</TabsTrigger>
+            <TabsTrigger value="seo">SEO</TabsTrigger>
+            <TabsTrigger value="settings">Settings</TabsTrigger>
+            <TabsTrigger value="health">Health</TabsTrigger>
           </TabsList>
 
           <TabsContent value="analytics">
@@ -136,6 +140,14 @@ export default function Admin() {
 
           <TabsContent value="seo">
             <SEOManagement />
+          </TabsContent>
+
+          <TabsContent value="settings">
+            <AdminSettings />
+          </TabsContent>
+
+          <TabsContent value="health">
+            <AdminSystemHealth />
           </TabsContent>
         </Tabs>
       </main>

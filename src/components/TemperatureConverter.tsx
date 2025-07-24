@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Copy, RotateCcw, Thermometer, Snowflake, Flame, Settings, Zap, ChevronRight } from 'lucide-react';
+import { Copy, RotateCcw, Thermometer, Snowflake, Flame, Settings, Zap, ChevronRight, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -205,23 +205,32 @@ export function TemperatureConverter() {
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6">
-      {/* Input Section */}
+      {/* Main Converter Card */}
       <Card className="shadow-card relative overflow-hidden">
         {animationEnabled && isConverting && (
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent -translate-x-full animate-slide-right" />
         )}
         <CardContent className="p-6">
-          <div className="space-y-4">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1 relative">
+          <div className="text-center mb-6">
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <Thermometer className="w-8 h-8 text-primary" />
+              <h2 className="text-2xl font-bold">ConvertTemp - Temperature Converter</h2>
+            </div>
+            <p className="text-muted-foreground">Convert between Celsius, Fahrenheit, Kelvin, and Rankine</p>
+          </div>
+
+          <div className="space-y-6">
+            {/* Input Section */}
+            <div className="flex flex-col sm:flex-row gap-4 items-center">
+              <div className="flex-1 relative max-w-md">
                 <Input
                   ref={inputRef}
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder={`Enter temperature (e.g., 100${getUnitSymbol(fromUnit)}, 32F, 273K)`}
-                  className="text-lg h-12 pr-10"
+                  placeholder="25"
+                  className="text-xl h-14 text-center font-semibold"
                   autoFocus
                 />
                 {isConverting && animationEnabled && (
@@ -230,6 +239,20 @@ export function TemperatureConverter() {
                   </div>
                 )}
               </div>
+              
+              {/* Unit Selector */}
+              <select 
+                value={fromUnit} 
+                onChange={(e) => setFromUnit(e.target.value as TemperatureUnit)}
+                className="px-4 py-3 border rounded-lg bg-background text-lg font-medium min-w-[140px]"
+              >
+                {units.map(unit => (
+                  <option key={unit.value} value={unit.value}>
+                    {unit.label} ({getUnitSymbol(unit.value)})
+                  </option>
+                ))}
+              </select>
+              
               <div className="flex gap-2">
                 <Button 
                   variant="outline" 
@@ -252,6 +275,56 @@ export function TemperatureConverter() {
                 </Button>
               </div>
             </div>
+
+            {/* Instant Results Section */}
+            {result && (
+              <Card className="bg-gradient-to-r from-yellow-400 via-green-400 to-green-600 text-white">
+                <CardContent className="p-6">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {units.map((unit) => {
+                      const value = result[unit.value.toLowerCase() as keyof ConversionResult] as number;
+                      const formatted = result.formatted[unit.value.toLowerCase() as keyof typeof result.formatted];
+                      
+                      return (
+                        <div key={unit.value} className="text-center">
+                          <div className="text-sm font-medium opacity-90 mb-1">{unit.label}</div>
+                          <div className="text-xl font-bold flex items-center justify-center gap-1">
+                            {formatted}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleCopy(formatted)}
+                              className="h-6 w-6 p-0 hover:bg-white/20 text-white"
+                              title={`Copy ${formatted}`}
+                            >
+                              <Copy className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  
+                  {/* Temperature Description */}
+                  <div className="mt-4 text-center">
+                    <div className="flex items-center justify-center gap-2 text-sm font-medium">
+                      <Thermometer className="w-4 h-4" />
+                      <span>
+                        {(() => {
+                          const celsius = result.celsius;
+                          if (celsius <= 0) return "Freezing point or below";
+                          if (celsius <= 25) return "Comfortable room temperature";
+                          if (celsius <= 37) return "Body temperature range";
+                          if (celsius <= 60) return "Hot temperature";
+                          if (celsius <= 100) return "Very hot - near boiling point";
+                          return "Extremely hot temperature";
+                        })()}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Settings Panel */}
             {showSettings && (
@@ -295,95 +368,60 @@ export function TemperatureConverter() {
               </Card>
             )}
 
-            {/* Unit Selection */}
-            <div className="flex flex-wrap gap-2">
-              {units.map((unit, index) => (
-                <Button
-                  key={unit.value}
-                  variant={fromUnit === unit.value ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => {
-                    setFromUnit(unit.value);
-                    trackInteraction('unit_changed', { unit: unit.value });
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'ArrowRight') {
-                      e.preventDefault();
-                      cycleUnit('next');
-                    } else if (e.key === 'ArrowLeft') {
-                      e.preventDefault();
-                      cycleUnit('prev');
-                    }
-                  }}
-                  className={`flex items-center gap-2 transition-all duration-200 ${
-                    animationEnabled ? 'hover:scale-105' : ''
-                  }`}
-                  title={`${unit.label} (Arrow keys to cycle)`}
-                >
-                  {unit.icon}
-                  {unit.label}
-                  {fromUnit === unit.value && <ChevronRight className="w-3 h-3 ml-1" />}
-                </Button>
-              ))}
-            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Results Section */}
-      {result && (
-        <div 
-          ref={resultsRef}
-          className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ${
-            animationEnabled ? 'animate-fade-in' : ''
-          } ${isConverting && animationEnabled ? 'animate-temp-pulse' : ''}`}
-        >
-          {units.map((unit, index) => {
-            const value = result[unit.value.toLowerCase() as keyof ConversionResult] as number;
-            const formatted = result.formatted[unit.value.toLowerCase() as keyof typeof result.formatted];
-            const isInputUnit = unit.value === fromUnit;
-            
-            return (
-              <Card 
-                key={unit.value} 
-                className={`shadow-card transition-all duration-300 hover:shadow-temp ${
-                  isInputUnit ? 'ring-2 ring-primary bg-gradient-temp' : ''
-                } ${animationEnabled ? 'hover:scale-105' : 'hover:shadow-lg'}`}
-                style={animationEnabled ? { 
-                  animationDelay: `${index * 50}ms`,
-                  animation: result ? 'fade-in 0.3s ease-out forwards' : undefined
-                } : undefined}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      {unit.icon}
-                      <span className="font-medium text-sm">{unit.label}</span>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleCopy(formatted)}
-                      className={`h-8 w-8 p-0 ${animationEnabled ? 'hover:scale-110' : ''} transition-transform`}
-                      title={`Copy ${formatted}`}
-                    >
-                      <Copy className="w-3 h-3" />
-                    </Button>
-                  </div>
-                  <div className={`text-2xl font-bold ${getTemperatureColor(value, unit.value)} ${isInputUnit ? 'text-white' : ''}`}>
-                    {formatted}
-                  </div>
-                  {!isInputUnit && (
-                    <div className="text-xs text-muted-foreground mt-1">
-                      {unit.value === 'K' || unit.value === 'R' ? 'Absolute scale' : 'Relative scale'}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      )}
+      {/* Feature Highlights */}
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="text-center">
+          <CardContent className="p-4">
+            <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
+              <Thermometer className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="font-semibold mb-2">Smart Auto-Convert</h3>
+            <p className="text-sm text-muted-foreground">
+              Type "25C" or "77F" automatic unit detection and instant conversion
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card className="text-center">
+          <CardContent className="p-4">
+            <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-3">
+              <Zap className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="font-semibold mb-2">Science Facts</h3>
+            <p className="text-sm text-muted-foreground">
+              Learn fascinating temperature facts with every conversion
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card className="text-center">
+          <CardContent className="p-4">
+            <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-3">
+              <Thermometer className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="font-semibold mb-2">No Sign-up</h3>
+            <p className="text-sm text-muted-foreground">
+              Free to use, no account required. Just convert and learn!
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card className="text-center">
+          <CardContent className="p-4">
+            <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+              <TrendingUp className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="font-semibold mb-2">Ad-Supported</h3>
+            <p className="text-sm text-muted-foreground">
+              Free forever, powered by ethical advertising
+            </p>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Enhanced Help Text */}
       <Card className="bg-muted/50">
