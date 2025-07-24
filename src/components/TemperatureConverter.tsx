@@ -276,28 +276,28 @@ export function TemperatureConverter() {
               </div>
             </div>
 
-            {/* Instant Results Section */}
+            {/* Instant Results Section - Matches uploaded image */}
             {result && (
-              <Card className="bg-gradient-to-r from-yellow-400 via-green-400 to-green-600 text-white">
+              <Card className="bg-gradient-to-r from-yellow-400 via-green-400 to-green-600 text-white shadow-lg">
                 <CardContent className="p-6">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                     {units.map((unit) => {
                       const value = result[unit.value.toLowerCase() as keyof ConversionResult] as number;
                       const formatted = result.formatted[unit.value.toLowerCase() as keyof typeof result.formatted];
                       
                       return (
                         <div key={unit.value} className="text-center">
-                          <div className="text-sm font-medium opacity-90 mb-1">{unit.label}</div>
-                          <div className="text-xl font-bold flex items-center justify-center gap-1">
+                          <div className="text-sm font-medium opacity-90 mb-2">{unit.label}</div>
+                          <div className="text-xl md:text-2xl font-bold flex items-center justify-center gap-2">
                             {formatted}
                             <Button
                               variant="ghost"
                               size="sm"
                               onClick={() => handleCopy(formatted)}
-                              className="h-6 w-6 p-0 hover:bg-white/20 text-white"
+                              className="h-6 w-6 p-0 hover:bg-white/20 text-white opacity-80 hover:opacity-100"
                               title={`Copy ${formatted}`}
                             >
-                              <Copy className="w-3 h-3" />
+                              <Copy className="w-4 h-4" />
                             </Button>
                           </div>
                         </div>
@@ -306,14 +306,17 @@ export function TemperatureConverter() {
                   </div>
                   
                   {/* Temperature Description */}
-                  <div className="mt-4 text-center">
+                  <div className="mt-6 text-center border-t border-white/20 pt-4">
                     <div className="flex items-center justify-center gap-2 text-sm font-medium">
                       <Thermometer className="w-4 h-4" />
                       <span>
                         {(() => {
                           const celsius = result.celsius;
                           if (celsius <= 0) return "Freezing point or below";
+                          if (celsius <= 10) return "Very cold temperature";
+                          if (celsius <= 20) return "Cool temperature";
                           if (celsius <= 25) return "Comfortable room temperature";
+                          if (celsius <= 30) return "Warm temperature";
                           if (celsius <= 37) return "Body temperature range";
                           if (celsius <= 60) return "Hot temperature";
                           if (celsius <= 100) return "Very hot - near boiling point";
