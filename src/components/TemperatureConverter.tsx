@@ -164,7 +164,7 @@ export function TemperatureConverter() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="25"
+                placeholder="e.g., 25C, 77F, 298K"
                 className="text-2xl h-16 text-center font-bold border-2"
                 autoFocus
               />
@@ -195,10 +195,21 @@ export function TemperatureConverter() {
             </select>
           </div>
 
-          {/* Instant Results - Matches your uploaded image exactly */}
+          {/* Instant Results - Dynamic colors based on temperature */}
           {result && (
             <div className="mt-6">
-              <Card className="bg-gradient-to-br from-yellow-400 via-green-400 to-green-500 text-white shadow-xl border-0">
+              <Card className={`text-white shadow-xl border-0 ${(() => {
+                const celsius = result.celsius;
+                if (celsius < -20) return "bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800"; // Extremely cold
+                if (celsius < 0) return "bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600"; // Freezing
+                if (celsius < 10) return "bg-gradient-to-br from-cyan-400 via-blue-400 to-blue-500"; // Very cold
+                if (celsius < 20) return "bg-gradient-to-br from-green-400 via-cyan-400 to-blue-400"; // Cool
+                if (celsius < 30) return "bg-gradient-to-br from-yellow-400 via-green-400 to-green-500"; // Comfortable
+                if (celsius < 60) return "bg-gradient-to-br from-orange-400 via-yellow-400 to-orange-500"; // Warm
+                if (celsius < 100) return "bg-gradient-to-br from-red-500 via-orange-500 to-red-600"; // Hot
+                if (celsius < 150) return "bg-gradient-to-br from-red-600 via-red-700 to-pink-600"; // Very hot
+                return "bg-gradient-to-br from-purple-600 via-red-600 to-pink-700"; // Extremely hot
+              })()}`}>
                 <CardContent className="p-6">
                   <div className="grid grid-cols-2 gap-4">
                     {/* Celsius */}
