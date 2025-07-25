@@ -19,17 +19,17 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-hero">
+    <div className="min-h-screen bg-gradient-hero flex flex-col">
       <SEOHead />
       
       {/* Header */}
-      <header className="container mx-auto px-4 py-6">
+      <header className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-temp rounded-full flex items-center justify-center">
-              <Thermometer className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+            <div className="w-10 h-10 bg-gradient-temp rounded-full flex items-center justify-center">
+              <Thermometer className="w-5 h-5 text-white" />
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold bg-gradient-temp bg-clip-text text-transparent">
+            <h1 className="text-lg font-bold bg-gradient-temp bg-clip-text text-transparent">
               ConvertTemp
             </h1>
           </div>
@@ -50,38 +50,21 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 pb-8">
+      {/* Main Content - Centered */}
+      <main className="flex-1 flex flex-col items-center justify-center container mx-auto px-4 py-8">
         {!showAdmin ? (
-          <>
-            <div className="text-center mb-8">
-              <h1 className="text-4xl md:text-6xl font-bold mb-4">
-                Free Temperature Converter
-                <span className="block text-3xl md:text-4xl bg-gradient-temp bg-clip-text text-transparent">
-                  Celsius • Fahrenheit • Kelvin • Rankine
-                </span>
-              </h1>
-              
-              <p className="text-xl md:text-2xl text-muted-foreground mb-2 max-w-3xl mx-auto">
-                Convert temperatures instantly with <strong>smart input detection</strong>. Works perfectly on any device.
-              </p>
-              
-              <p className="text-sm text-muted-foreground mb-8">
-                100% Free • No Sign-up Required • Works Offline • Mobile App Available
-              </p>
-            </div>
-
+          <div className="w-full max-w-md space-y-8">
             {/* Top Banner Ad */}
-            <AdSlot slotType="banner_top" className="mb-8" />
+            <AdSlot slotType="banner_top" className="mb-4" />
 
             {/* Converter Component */}
             <TemperatureConverter />
 
             {/* In-content Ad */}
-            <AdSlot slotType="in_content" className="mt-8" />
-          </>
+            <AdSlot slotType="in_content" className="mt-4" />
+          </div>
         ) : (
-          <div className="space-y-6">
+          <div className="w-full max-w-6xl space-y-6">
             <div className="flex items-center justify-between">
               <h1 className="text-3xl font-bold">Admin Dashboard</h1>
               <Button variant="outline" onClick={() => setShowAdmin(false)}>
