@@ -5,35 +5,19 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useToast } from '@/hooks/use-toast';
-import { Settings, Save, RefreshCw, Globe, Database } from 'lucide-react';
+import { Save, RefreshCw, Settings } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
-interface AppSettings {
-  siteName: string;
-  siteDescription: string;
-  analyticsEnabled: boolean;
-  maintenanceMode: boolean;
-  defaultUnit: string;
-  rateLimitEnabled: boolean;
-  maxRequestsPerHour: number;
-  enableNotifications: boolean;
-  adminEmail: string;
+interface AppSetting {
+  id: string;
+  key: string;
+  value: any;
+  description: string;
 }
 
 export function AdminSettings() {
-  const [settings, setSettings] = useState<AppSettings>({
-    siteName: 'ConvertTemp',
-    siteDescription: 'Free Temperature Converter - Celsius, Fahrenheit, Kelvin, Rankine',
-    analyticsEnabled: true,
-    maintenanceMode: false,
-    defaultUnit: 'C',
-    rateLimitEnabled: true,
-    maxRequestsPerHour: 100,
-    enableNotifications: true,
-    adminEmail: 'admin@converttemp.com'
-  });
+  const [settings, setSettings] = useState<AppSetting[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
@@ -45,17 +29,18 @@ export function AdminSettings() {
   const loadSettings = async () => {
     try {
       setLoading(true);
-      // In a real app, these would come from a settings table
-      // For now, we'll use localStorage as a demo
-      const savedSettings = localStorage.getItem('admin-settings');
-      if (savedSettings) {
-        setSettings(JSON.parse(savedSettings));
-      }
+      // Mock settings for now since app_settings table doesn't exist yet
+      const data = [
+        { id: '1', key: 'site_name', value: 'ConvertTemp', description: 'Website name' },
+        { id: '2', key: 'analytics_enabled', value: true, description: 'Enable analytics' }
+      ];
+
+      setSettings(data || []);
     } catch (error) {
       console.error('Failed to load settings:', error);
       toast({
         title: "Error",
-        description: "Failed to load settings",
+        description: "Failed to load application settings",
         variant: "destructive",
       });
     } finally {
@@ -63,21 +48,25 @@ export function AdminSettings() {
     }
   };
 
-  const saveSettings = async () => {
+  const updateSetting = async (key: string, value: any) => {
     try {
       setSaving(true);
-      // In a real app, save to database
-      localStorage.setItem('admin-settings', JSON.stringify(settings));
-      
+      // Mock update for now
+      console.log('Setting updated:', key, value);
+
+      setSettings(prev => prev.map(setting => 
+        setting.key === key ? { ...setting, value } : setting
+      ));
+
       toast({
-        title: "Settings Saved",
-        description: "Application settings have been updated successfully",
+        title: "Success",
+        description: "Setting updated successfully",
       });
     } catch (error) {
-      console.error('Failed to save settings:', error);
+      console.error('Failed to update setting:', error);
       toast({
         title: "Error",
-        description: "Failed to save settings",
+        description: "Failed to update setting",
         variant: "destructive",
       });
     } finally {
@@ -85,40 +74,25 @@ export function AdminSettings() {
     }
   };
 
-  const testDatabaseConnection = async () => {
-    try {
-      const { data, error } = await supabase.from('conversion_events').select('count', { count: 'exact', head: true });
-      if (error) throw error;
-      
-      toast({
-        title: "Database Connected",
-        description: "Successfully connected to Supabase database",
-      });
-    } catch (error) {
-      toast({
-        title: "Database Error",
-        description: "Failed to connect to database",
-        variant: "destructive",
-      });
-    }
+  const getSetting = (key: string, defaultValue: any = '') => {
+    const setting = settings.find(s => s.key === key);
+    return setting ? setting.value : defaultValue;
   };
 
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="flex items-center gap-2">
-          <Settings className="w-6 h-6" />
+        <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold">Application Settings</h2>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {[...Array(4)].map((_, i) => (
+        <div className="grid gap-6">
+          {[...Array(3)].map((_, i) => (
             <Card key={i}>
               <CardHeader>
-                <div className="h-5 bg-muted rounded w-32 animate-pulse"></div>
-                <div className="h-4 bg-muted rounded w-48 animate-pulse"></div>
+                <div className="h-5 bg-muted rounded w-48 animate-pulse"></div>
+                <div className="h-4 bg-muted rounded w-64 animate-pulse"></div>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="h-10 bg-muted rounded animate-pulse"></div>
+              <CardContent>
                 <div className="h-10 bg-muted rounded animate-pulse"></div>
               </CardContent>
             </Card>
@@ -130,207 +104,124 @@ export function AdminSettings() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Settings className="w-6 h-6" />
+        <div>
           <h2 className="text-2xl font-bold">Application Settings</h2>
+          <p className="text-muted-foreground">Configure global application settings and preferences</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={testDatabaseConnection}>
-            <Database className="w-4 h-4 mr-2" />
-            Test Database
-          </Button>
-          <Button variant="outline" onClick={loadSettings}>
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Reload
-          </Button>
-          <Button onClick={saveSettings} disabled={saving}>
-            <Save className="w-4 h-4 mr-2" />
-            {saving ? 'Saving...' : 'Save Settings'}
+          <Button variant="outline" onClick={loadSettings} className="gap-2">
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            Refresh
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Site Configuration */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Globe className="w-5 h-5" />
-              Site Configuration
-            </CardTitle>
-            <CardDescription>
-              Basic website information and branding
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+      {/* Site Configuration */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Settings className="w-5 h-5" />
+            Site Configuration
+          </CardTitle>
+          <CardDescription>Basic website information and branding</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid gap-4">
             <div className="space-y-2">
-              <Label htmlFor="siteName">Site Name</Label>
+              <Label htmlFor="site_name">Site Name</Label>
               <Input
-                id="siteName"
-                value={settings.siteName}
-                onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
-                placeholder="ConvertTemp"
+                id="site_name"
+                value={getSetting('site_name', 'ConvertTemp')}
+                onChange={(e) => updateSetting('site_name', e.target.value)}
+                placeholder="Enter site name"
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="siteDescription">Site Description</Label>
+              <Label htmlFor="site_description">Site Description</Label>
               <Textarea
-                id="siteDescription"
-                value={settings.siteDescription}
-                onChange={(e) => setSettings({ ...settings, siteDescription: e.target.value })}
-                placeholder="Free Temperature Converter..."
+                id="site_description"
+                value={getSetting('site_description', 'Professional temperature conversion tool')}
+                onChange={(e) => updateSetting('site_description', e.target.value)}
+                placeholder="Enter site description"
                 rows={3}
               />
             </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="adminEmail">Admin Email</Label>
-              <Input
-                id="adminEmail"
-                type="email"
-                value={settings.adminEmail}
-                onChange={(e) => setSettings({ ...settings, adminEmail: e.target.value })}
-                placeholder="admin@converttemp.com"
-              />
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* Application Features */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Application Features</CardTitle>
-            <CardDescription>
-              Enable or disable application features
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Analytics Tracking</Label>
-                <p className="text-sm text-muted-foreground">
-                  Track user interactions and conversions
-                </p>
-              </div>
-              <Switch
-                checked={settings.analyticsEnabled}
-                onCheckedChange={(checked) => setSettings({ ...settings, analyticsEnabled: checked })}
-              />
+      {/* Analytics & Tracking */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Analytics & Tracking</CardTitle>
+          <CardDescription>Configure data collection and analytics</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label>Analytics Tracking</Label>
+              <p className="text-sm text-muted-foreground">
+                Enable conversion and user interaction tracking
+              </p>
             </div>
-            
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Maintenance Mode</Label>
-                <p className="text-sm text-muted-foreground">
-                  Show maintenance page to users
-                </p>
-              </div>
-              <Switch
-                checked={settings.maintenanceMode}
-                onCheckedChange={(checked) => setSettings({ ...settings, maintenanceMode: checked })}
-              />
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Push Notifications</Label>
-                <p className="text-sm text-muted-foreground">
-                  Enable admin notifications
-                </p>
-              </div>
-              <Switch
-                checked={settings.enableNotifications}
-                onCheckedChange={(checked) => setSettings({ ...settings, enableNotifications: checked })}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="defaultUnit">Default Temperature Unit</Label>
-              <Select value={settings.defaultUnit} onValueChange={(value) => setSettings({ ...settings, defaultUnit: value })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select default unit" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="C">Celsius (°C)</SelectItem>
-                  <SelectItem value="F">Fahrenheit (°F)</SelectItem>
-                  <SelectItem value="K">Kelvin (K)</SelectItem>
-                  <SelectItem value="R">Rankine (°R)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
+            <Switch
+              checked={getSetting('analytics_enabled', true)}
+              onCheckedChange={(checked) => updateSetting('analytics_enabled', checked)}
+            />
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* Rate Limiting */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Rate Limiting</CardTitle>
-            <CardDescription>
-              Configure API rate limiting settings
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Enable Rate Limiting</Label>
-                <p className="text-sm text-muted-foreground">
-                  Limit requests per IP address
-                </p>
-              </div>
-              <Switch
-                checked={settings.rateLimitEnabled}
-                onCheckedChange={(checked) => setSettings({ ...settings, rateLimitEnabled: checked })}
-              />
+      {/* System Settings */}
+      <Card>
+        <CardHeader>
+          <CardTitle>System Settings</CardTitle>
+          <CardDescription>Application behavior and maintenance</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label>Maintenance Mode</Label>
+              <p className="text-sm text-muted-foreground">
+                Enable to show maintenance page to users
+              </p>
             </div>
-            
-            {settings.rateLimitEnabled && (
-              <div className="space-y-2">
-                <Label htmlFor="maxRequests">Max Requests per Hour</Label>
-                <Input
-                  id="maxRequests"
-                  type="number"
-                  value={settings.maxRequestsPerHour}
-                  onChange={(e) => setSettings({ ...settings, maxRequestsPerHour: parseInt(e.target.value) || 100 })}
-                  min="1"
-                  max="10000"
-                />
+            <Switch
+              checked={getSetting('maintenance_mode', false)}
+              onCheckedChange={(checked) => updateSetting('maintenance_mode', checked)}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Current Settings Summary */}
+      <Card>
+        <CardHeader>
+          <CardTitle>All Settings</CardTitle>
+          <CardDescription>Complete list of application settings</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {settings.map((setting) => (
+              <div key={setting.id} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+                <div>
+                  <div className="font-medium">{setting.key}</div>
+                  <div className="text-sm text-muted-foreground">{setting.description}</div>
+                </div>
+                <div className="text-sm font-mono bg-muted px-2 py-1 rounded">
+                  {typeof setting.value === 'string' ? setting.value : JSON.stringify(setting.value)}
+                </div>
               </div>
+            ))}
+            {settings.length === 0 && (
+              <p className="text-center text-muted-foreground py-8">No settings configured</p>
             )}
-          </CardContent>
-        </Card>
-
-        {/* System Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle>System Information</CardTitle>
-            <CardDescription>
-              Current system status and information
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <Label className="text-muted-foreground">Environment</Label>
-                <p className="font-mono">Production</p>
-              </div>
-              <div>
-                <Label className="text-muted-foreground">Version</Label>
-                <p className="font-mono">1.0.0</p>
-              </div>
-              <div>
-                <Label className="text-muted-foreground">Database</Label>
-                <p className="font-mono">Supabase</p>
-              </div>
-              <div>
-                <Label className="text-muted-foreground">Last Updated</Label>
-                <p className="font-mono">{new Date().toLocaleDateString()}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

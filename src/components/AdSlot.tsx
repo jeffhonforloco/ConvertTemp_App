@@ -62,13 +62,8 @@ export function AdSlot({ slotType, className = '' }: AdSlotProps) {
   }
 
   if (!adSlot || !adSlot.network.publisher_id) {
-    // Show placeholder ad space
-    return (
-      <div className={`border-2 border-dashed border-muted rounded-lg p-4 text-center text-muted-foreground ${className}`}>
-        <div className="text-sm">Ad Space Available</div>
-        <div className="text-xs mt-1">Configure ad networks in admin panel</div>
-      </div>
-    );
+    // Don't show anything to regular users if no ads are configured
+    return null;
   }
 
   // Render different ad networks

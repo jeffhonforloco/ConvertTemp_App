@@ -1,14 +1,24 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
+import { 
+  Search, 
+  Plus, 
+  Edit, 
+  Trash2, 
+  Save, 
+  RefreshCw,
+  Globe,
+  FileText,
+  Tags
+} from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Save, Search, Globe, TrendingUp, Plus } from 'lucide-react';
 
 interface SEOPage {
   id: string;
@@ -16,41 +26,53 @@ interface SEOPage {
   title: string;
   description: string;
   keywords: string[];
-  canonical_url: string | null;
   og_title: string | null;
   og_description: string | null;
   og_image: string | null;
-  schema_markup: any;
+  canonical_url: string | null;
   is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export function SEOManagement() {
-  const [seoPages, setSeoPages] = useState<SEOPage[]>([]);
-  const [selectedPage, setSelectedPage] = useState<SEOPage | null>(null);
+  const [pages, setPages] = useState<SEOPage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingPage, setEditingPage] = useState<SEOPage | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
   const { toast } = useToast();
 
+  const defaultPage: Partial<SEOPage> = {
+    path: '',
+    title: '',
+    description: '',
+    keywords: [],
+    og_title: '',
+    og_description: '',
+    og_image: '',
+    canonical_url: '',
+    is_active: true
+  };
+
   useEffect(() => {
-    fetchSEOPages();
+    loadSEOPages();
   }, []);
 
-  const fetchSEOPages = async () => {
+  const loadSEOPages = async () => {
     try {
+      setLoading(true);
       const { data, error } = await supabase
         .from('seo_pages')
         .select('*')
-        .order('path');
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setSeoPages(data || []);
-      if (data && data.length > 0 && !selectedPage) {
-        setSelectedPage(data[0]);
-      }
+      setPages(data || []);
     } catch (error) {
-      console.error('Error fetching SEO pages:', error);
+      console.error('Failed to load SEO pages:', error);
       toast({
         title: "Error",
-        description: "Failed to fetch SEO pages",
+        description: "Failed to load SEO pages",
         variant: "destructive",
       });
     } finally {
@@ -58,68 +80,75 @@ export function SEOManagement() {
     }
   };
 
-  const updateSEOPage = async (id: string, updates: Partial<SEOPage>) => {
+  const savePage = async (pageData: Partial<SEOPage>) => {
     try {
-      const { error } = await supabase
-        .from('seo_pages')
-        .update(updates)
-        .eq('id', id);
+      if (editingPage) {
+        // Update existing page
+        const { error } = await supabase
+          .from('seo_pages')
+          .update(pageData)
+          .eq('id', editingPage.id);
 
-      if (error) throw error;
+        if (error) throw error;
 
-      setSeoPages(prev => 
-        prev.map(page => 
-          page.id === id ? { ...page, ...updates } : page
-        )
-      );
+        setPages(prev => prev.map(page => 
+          page.id === editingPage.id ? { ...page, ...pageData } : page
+        ));
 
-      if (selectedPage?.id === id) {
-        setSelectedPage(prev => prev ? { ...prev, ...updates } : null);
+        toast({
+          title: "Success",
+          description: "SEO page updated successfully",
+        });
+      } else {
+        // Create new page
+        const { data, error } = await supabase
+          .from('seo_pages')
+          .insert([pageData as any])
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        setPages(prev => [data, ...prev]);
+
+        toast({
+          title: "Success",
+          description: "SEO page created successfully",
+        });
       }
 
-      toast({
-        title: "Success",
-        description: "SEO settings updated successfully",
-      });
+      setEditingPage(null);
+      setIsCreating(false);
     } catch (error) {
-      console.error('Error updating SEO page:', error);
+      console.error('Failed to save SEO page:', error);
       toast({
         title: "Error",
-        description: "Failed to update SEO settings",
+        description: "Failed to save SEO page",
         variant: "destructive",
       });
     }
   };
 
-  const createSEOPage = async () => {
+  const deletePage = async (id: string) => {
     try {
-      const newPath = `/new-page-${Date.now()}`;
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('seo_pages')
-        .insert({
-          path: newPath,
-          title: 'New Page Title',
-          description: 'New page description',
-          keywords: [],
-          is_active: false
-        })
-        .select()
-        .single();
+        .delete()
+        .eq('id', id);
 
       if (error) throw error;
 
-      setSeoPages(prev => [...prev, data]);
-      setSelectedPage(data);
+      setPages(prev => prev.filter(page => page.id !== id));
 
       toast({
         title: "Success",
-        description: "New SEO page created",
+        description: "SEO page deleted successfully",
       });
     } catch (error) {
-      console.error('Error creating SEO page:', error);
+      console.error('Failed to delete SEO page:', error);
       toast({
         title: "Error",
-        description: "Failed to create SEO page",
+        description: "Failed to delete SEO page",
         variant: "destructive",
       });
     }
@@ -127,206 +156,216 @@ export function SEOManagement() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold">SEO Management</h2>
+        </div>
+        <div className="grid gap-4">
+          {[...Array(3)].map((_, i) => (
+            <Card key={i}>
+              <CardHeader>
+                <div className="h-5 bg-muted rounded w-48 animate-pulse"></div>
+                <div className="h-4 bg-muted rounded w-64 animate-pulse"></div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-4 bg-muted rounded w-full animate-pulse"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (isCreating || editingPage) {
+    const currentPage = editingPage || defaultPage;
+    
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold">
+            {editingPage ? 'Edit SEO Page' : 'Create SEO Page'}
+          </h2>
+          <Button variant="outline" onClick={() => {
+            setEditingPage(null);
+            setIsCreating(false);
+          }}>
+            Cancel
+          </Button>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Page Information</CardTitle>
+            <CardDescription>Basic page details and metadata</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="path">URL Path</Label>
+                <Input
+                  id="path"
+                  value={currentPage.path || ''}
+                  onChange={(e) => setEditingPage(prev => ({ ...prev!, path: e.target.value }))}
+                  placeholder="/example-page"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="canonical_url">Canonical URL</Label>
+                <Input
+                  id="canonical_url"
+                  value={currentPage.canonical_url || ''}
+                  onChange={(e) => setEditingPage(prev => ({ ...prev!, canonical_url: e.target.value }))}
+                  placeholder="https://converttemp.com/example-page"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="title">Page Title</Label>
+              <Input
+                id="title"
+                value={currentPage.title || ''}
+                onChange={(e) => setEditingPage(prev => ({ ...prev!, title: e.target.value }))}
+                placeholder="Enter page title"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description">Meta Description</Label>
+              <Textarea
+                id="description"
+                value={currentPage.description || ''}
+                onChange={(e) => setEditingPage(prev => ({ ...prev!, description: e.target.value }))}
+                placeholder="Enter meta description"
+                rows={3}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="keywords">Keywords (comma-separated)</Label>
+              <Input
+                id="keywords"
+                value={currentPage.keywords?.join(', ') || ''}
+                onChange={(e) => setEditingPage(prev => ({ 
+                  ...prev!, 
+                  keywords: e.target.value.split(',').map(k => k.trim()).filter(k => k)
+                }))}
+                placeholder="temperature, converter, celsius, fahrenheit"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="flex gap-2">
+          <Button onClick={() => savePage(currentPage)} className="gap-2">
+            <Save className="w-4 h-4" />
+            {editingPage ? 'Update Page' : 'Create Page'}
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* Pages List */}
-      <Card className="lg:col-span-1">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <Search className="h-5 w-5" />
-              SEO Pages
-            </CardTitle>
-            <Button onClick={createSEOPage} size="sm">
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            {seoPages.map((page) => (
-              <div
-                key={page.id}
-                className={`p-3 rounded-lg border cursor-pointer transition-colors ${
-                  selectedPage?.id === page.id 
-                    ? 'bg-primary/10 border-primary' 
-                    : 'hover:bg-muted'
-                }`}
-                onClick={() => setSelectedPage(page)}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="font-medium text-sm">{page.path}</div>
-                  {page.is_active && <Badge variant="secondary" className="text-xs">Active</Badge>}
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold">SEO Management</h2>
+          <p className="text-muted-foreground">Manage page metadata and search optimization</p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={loadSEOPages} className="gap-2">
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+          <Button onClick={() => setIsCreating(true)} className="gap-2">
+            <Plus className="w-4 h-4" />
+            Add Page
+          </Button>
+        </div>
+      </div>
+
+      {/* SEO Pages List */}
+      <div className="grid gap-4">
+        {pages.map((page) => (
+          <Card key={page.id}>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Globe className="w-5 h-5 text-muted-foreground" />
+                  <div>
+                    <CardTitle className="text-lg">{page.title}</CardTitle>
+                    <CardDescription className="flex items-center gap-2">
+                      <span>{page.path}</span>
+                      {page.is_active ? (
+                        <Badge variant="default">Active</Badge>
+                      ) : (
+                        <Badge variant="secondary">Inactive</Badge>
+                      )}
+                    </CardDescription>
+                  </div>
                 </div>
-                <div className="text-xs text-muted-foreground mt-1 truncate">
-                  {page.title}
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setEditingPage(page)}
+                    className="gap-2"
+                  >
+                    <Edit className="w-4 h-4" />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => deletePage(page.id)}
+                    className="gap-2 text-red-600 hover:text-red-700"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete
+                  </Button>
                 </div>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* SEO Settings */}
-      {selectedPage && (
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <Globe className="h-5 w-5" />
-                SEO Settings: {selectedPage.path}
-              </CardTitle>
-              <Switch
-                checked={selectedPage.is_active}
-                onCheckedChange={(checked) => 
-                  updateSEOPage(selectedPage.id, { is_active: checked })
-                }
-              />
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Basic SEO */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Basic SEO</h3>
-              
-              <div className="space-y-2">
-                <Label htmlFor="path">Page Path</Label>
-                <Input
-                  id="path"
-                  value={selectedPage.path}
-                  onChange={(e) => 
-                    setSelectedPage(prev => prev ? { ...prev, path: e.target.value } : null)
-                  }
-                  placeholder="/page-path"
-                />
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex items-start gap-2">
+                  <FileText className="w-4 h-4 text-muted-foreground mt-0.5" />
+                  <p className="text-sm text-muted-foreground">{page.description}</p>
+                </div>
+                {page.keywords && page.keywords.length > 0 && (
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Tags className="w-4 h-4 text-muted-foreground" />
+                    {page.keywords.map((keyword, index) => (
+                      <Badge key={index} variant="outline" className="text-xs">
+                        {keyword}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+                <div className="text-xs text-muted-foreground">
+                  Last updated: {new Date(page.updated_at).toLocaleDateString()}
+                </div>
               </div>
+            </CardContent>
+          </Card>
+        ))}
 
-              <div className="space-y-2">
-                <Label htmlFor="title">Meta Title</Label>
-                <Input
-                  id="title"
-                  value={selectedPage.title}
-                  onChange={(e) => 
-                    setSelectedPage(prev => prev ? { ...prev, title: e.target.value } : null)
-                  }
-                  placeholder="Page title for search engines"
-                />
-                <p className="text-xs text-muted-foreground">
-                  {selectedPage.title.length}/60 characters (optimal: 50-60)
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description">Meta Description</Label>
-                <Textarea
-                  id="description"
-                  value={selectedPage.description}
-                  onChange={(e) => 
-                    setSelectedPage(prev => prev ? { ...prev, description: e.target.value } : null)
-                  }
-                  placeholder="Brief description for search results"
-                  rows={3}
-                />
-                <p className="text-xs text-muted-foreground">
-                  {selectedPage.description.length}/160 characters (optimal: 150-160)
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="keywords">Keywords (comma-separated)</Label>
-                <Input
-                  id="keywords"
-                  value={selectedPage.keywords.join(', ')}
-                  onChange={(e) => 
-                    setSelectedPage(prev => prev ? { 
-                      ...prev, 
-                      keywords: e.target.value.split(',').map(k => k.trim()).filter(k => k)
-                    } : null)
-                  }
-                  placeholder="keyword1, keyword2, keyword3"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="canonical">Canonical URL (optional)</Label>
-                <Input
-                  id="canonical"
-                  value={selectedPage.canonical_url || ''}
-                  onChange={(e) => 
-                    setSelectedPage(prev => prev ? { ...prev, canonical_url: e.target.value || null } : null)
-                  }
-                  placeholder="https://example.com/canonical-url"
-                />
-              </div>
-            </div>
-
-            {/* Open Graph */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Open Graph (Social Media)</h3>
-              
-              <div className="space-y-2">
-                <Label htmlFor="og_title">OG Title</Label>
-                <Input
-                  id="og_title"
-                  value={selectedPage.og_title || ''}
-                  onChange={(e) => 
-                    setSelectedPage(prev => prev ? { ...prev, og_title: e.target.value || null } : null)
-                  }
-                  placeholder="Title for social media sharing"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="og_description">OG Description</Label>
-                <Textarea
-                  id="og_description"
-                  value={selectedPage.og_description || ''}
-                  onChange={(e) => 
-                    setSelectedPage(prev => prev ? { ...prev, og_description: e.target.value || null } : null)
-                  }
-                  placeholder="Description for social media sharing"
-                  rows={2}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="og_image">OG Image URL</Label>
-                <Input
-                  id="og_image"
-                  value={selectedPage.og_image || ''}
-                  onChange={(e) => 
-                    setSelectedPage(prev => prev ? { ...prev, og_image: e.target.value || null } : null)
-                  }
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
-            </div>
-
-            <Button
-              onClick={() => updateSEOPage(selectedPage.id, {
-                path: selectedPage.path,
-                title: selectedPage.title,
-                description: selectedPage.description,
-                keywords: selectedPage.keywords,
-                canonical_url: selectedPage.canonical_url,
-                og_title: selectedPage.og_title,
-                og_description: selectedPage.og_description,
-                og_image: selectedPage.og_image
-              })}
-              className="w-full"
-            >
-              <Save className="h-4 w-4 mr-2" />
-              Save SEO Settings
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+        {pages.length === 0 && (
+          <Card>
+            <CardContent className="text-center py-12">
+              <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No SEO pages configured</p>
+              <Button onClick={() => setIsCreating(true)} className="mt-4 gap-2">
+                <Plus className="w-4 h-4" />
+                Create Your First Page
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 }

@@ -26,9 +26,11 @@ const Index = () => {
       <header className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-temp rounded-full flex items-center justify-center">
-              <Thermometer className="w-5 h-5 text-white" />
-            </div>
+            <img 
+              src={convertTempLogo} 
+              alt="ConvertTemp Logo" 
+              className="h-8 w-auto"
+            />
             <h1 className="text-lg font-bold bg-gradient-temp bg-clip-text text-transparent">
               ConvertTemp
             </h1>
