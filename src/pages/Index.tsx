@@ -8,7 +8,7 @@ import { AdminDashboard } from '@/components/AdminDashboard';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { trackPageView } from '@/lib/analytics';
-import convertTempLogo from '@/assets/converttemp-logo.png';
+import { ConvertTempLogo } from '@/components/ConvertTempLogo';
 
 const Index = () => {
   const [showAdmin, setShowAdmin] = useState(false);
@@ -26,11 +26,7 @@ const Index = () => {
       <header className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <img 
-              src="/lovable-uploads/a96d02dd-a838-47a8-a6bb-8c65b5034a32.png" 
-              alt="ConvertTemp Logo" 
-              className="h-20 w-auto md:h-32 filter dark:brightness-90 dark:contrast-110 transition-all duration-300"
-            />
+            <ConvertTempLogo className="h-20 w-auto md:h-32 transition-all duration-300" />
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
