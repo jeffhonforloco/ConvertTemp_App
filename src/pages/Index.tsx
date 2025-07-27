@@ -23,10 +23,10 @@ const Index = () => {
       <SEOHead />
       
       {/* Header */}
-      <header className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
+      <header className="w-full px-4 py-4">
+        <div className="flex items-center justify-between w-full">
           <div className="flex items-center">
-            <ConvertTempLogo className="h-20 w-auto md:h-32 transition-all duration-300" />
+            <ConvertTempLogo className="h-16 w-auto md:h-20 transition-all duration-300" />
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
