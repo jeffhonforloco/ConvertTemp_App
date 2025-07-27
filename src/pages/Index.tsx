@@ -25,7 +25,13 @@ const Index = () => {
       {/* Header */}
       <header className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <div></div>
+          <div className="flex items-center">
+            <img 
+              src="/lovable-uploads/a96d02dd-a838-47a8-a6bb-8c65b5034a32.png" 
+              alt="ConvertTemp Logo" 
+              className="h-12 w-auto md:h-16"
+            />
+          </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
             {isAdmin && (
