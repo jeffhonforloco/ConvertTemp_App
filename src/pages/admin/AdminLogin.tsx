@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Label } from '@/components/ui/label';
 import { Shield, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { CreateDemoAdmin } from '@/components/CreateDemoAdmin';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
@@ -71,9 +72,14 @@ export default function AdminLogin() {
           <CardTitle className="text-2xl">Admin Login</CardTitle>
           <CardDescription>
             Access the ConvertTemp admin panel
+            <br />
+            <span className="text-sm text-muted-foreground mt-2 block">
+              Demo: admin@converttemp.com / admin123
+            </span>
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <CreateDemoAdmin />
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -116,11 +122,21 @@ export default function AdminLogin() {
               {loading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
-          <div className="mt-6 text-center">
+          <div className="mt-6 space-y-3">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setEmail('admin@converttemp.com');
+                setPassword('admin123');
+              }}
+              className="w-full text-sm"
+            >
+              Fill Demo Credentials
+            </Button>
             <Button
               variant="link"
               onClick={() => navigate('/')}
-              className="text-sm text-muted-foreground"
+              className="w-full text-sm text-muted-foreground"
             >
               Back to ConvertTemp
             </Button>
