@@ -71,10 +71,6 @@ export default function AdminLogin() {
           <CardTitle className="text-2xl">Admin Login</CardTitle>
           <CardDescription>
             Access the ConvertTemp admin panel
-            <br />
-            <span className="text-sm text-muted-foreground mt-2 block">
-              Demo: admin@converttemp.com / admin123
-            </span>
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -120,21 +116,11 @@ export default function AdminLogin() {
               {loading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
-          <div className="mt-6 space-y-3">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setEmail('admin@converttemp.com');
-                setPassword('admin123');
-              }}
-              className="w-full text-sm"
-            >
-              Fill Demo Credentials
-            </Button>
+          <div className="mt-6 text-center">
             <Button
               variant="link"
               onClick={() => navigate('/')}
-              className="w-full text-sm text-muted-foreground"
+              className="text-sm text-muted-foreground"
             >
               Back to ConvertTemp
             </Button>
