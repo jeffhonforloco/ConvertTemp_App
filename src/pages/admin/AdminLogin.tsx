@@ -7,7 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Label } from '@/components/ui/label';
 import { Shield, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { CreateDemoAdmin } from '@/components/CreateDemoAdmin';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
@@ -79,7 +78,6 @@ export default function AdminLogin() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <CreateDemoAdmin />
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>

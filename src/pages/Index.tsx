@@ -30,6 +30,15 @@ const Index = () => {
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => window.location.href = '/admin/login'}
+              className="gap-2 text-xs"
+            >
+              <Settings className="w-3 h-3" />
+              Admin
+            </Button>
             {isAdmin && (
               <Button
                 variant="outline"
@@ -38,7 +47,7 @@ const Index = () => {
                 className="gap-2"
               >
                 <Settings className="w-4 h-4" />
-                Admin
+                Dashboard
               </Button>
             )}
           </div>
