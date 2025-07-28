@@ -1,0 +1,25 @@
+
+{
+  "name": "Temperature Converter",
+  "short_name": "ConvertTemp",
+  "description": "Free online temperature converter for Celsius, Fahrenheit, Kelvin, and Rankine",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/lovable-uploads/b352bfa9-5aa1-453b-bc12-a3cc7f0f9403.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/lovable-uploads/b352bfa9-5aa1-453b-bc12-a3cc7f0f9403.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
