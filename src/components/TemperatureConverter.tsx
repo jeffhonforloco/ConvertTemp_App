@@ -148,7 +148,7 @@ export function TemperatureConverter() {
           <div className="text-center mb-6">
             <div className="flex items-center justify-center gap-2 mb-2">
               <Thermometer className="w-6 h-6 text-primary" />
-              <h2 className="text-xl font-bold">ConvertTemp - Temperature Converter</h2>
+              <h2 className="text-xl font-bold">Temperature Converter</h2>
             </div>
             <p className="text-sm text-muted-foreground">
               Convert between Celsius, Fahrenheit, Kelvin, and Rankine
