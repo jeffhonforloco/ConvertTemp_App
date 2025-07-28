@@ -1,4 +1,5 @@
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -9,19 +10,21 @@ import { Shield, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AdminLogin() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('admin@converttemp.com');
+  const [password, setPassword] = useState('admin123');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { signIn, user, isAdmin } = useAuth();
+  const { signIn, user, isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   // Redirect if already admin
-  if (user && isAdmin) {
-    navigate('/admin/dashboard');
-    return null;
-  }
+  useEffect(() => {
+    if (!authLoading && user && isAdmin) {
+      console.log('User is admin, redirecting to dashboard');
+      navigate('/admin/dashboard');
+    }
+  }, [user, isAdmin, authLoading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,21 +39,25 @@ export default function AdminLogin() {
 
     setLoading(true);
     try {
+      console.log('Attempting admin login with:', email);
       const { error } = await signIn(email, password);
       if (error) {
+        console.error('Login error:', error);
         toast({
           title: "Authentication Failed",
-          description: error.message,
+          description: error.message || "Invalid credentials",
           variant: "destructive",
         });
       } else {
+        console.log('Login successful');
         toast({
           title: "Success",
           description: "Signed in successfully",
         });
-        navigate('/admin/dashboard');
+        // Navigation will be handled by the useEffect above
       }
     } catch (error) {
+      console.error('Login exception:', error);
       toast({
         title: "Error",
         description: "An unexpected error occurred",
@@ -60,6 +67,14 @@ export default function AdminLogin() {
       setLoading(false);
     }
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center p-4">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center p-4">
@@ -112,6 +127,13 @@ export default function AdminLogin() {
                 </Button>
               </div>
             </div>
+            
+            <div className="p-3 bg-muted rounded-lg text-sm">
+              <p className="font-medium mb-1">Demo Credentials:</p>
+              <p>Email: admin@converttemp.com</p>
+              <p>Password: admin123</p>
+            </div>
+            
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Signing in..." : "Sign In"}
             </Button>

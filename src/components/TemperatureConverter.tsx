@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Copy, RotateCcw, Thermometer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -25,6 +26,7 @@ export function TemperatureConverter() {
   const [input, setInput] = useState('');
   const [fromUnit, setFromUnit] = useState<TemperatureUnit>('C');
   const [result, setResult] = useState<ConversionResult | null>(null);
+  const [userChangedUnit, setUserChangedUnit] = useState(false);
   const { toast } = useToast();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -35,9 +37,9 @@ export function TemperatureConverter() {
       return;
     }
 
-    // Try smart input parsing first
+    // Try smart input parsing first, but only if user hasn't manually changed unit
     const smartParsed = parseSmartInput(value);
-    if (smartParsed) {
+    if (smartParsed && !userChangedUnit) {
       const { value: parsedValue, unit: parsedUnit } = smartParsed;
       
       if (!validateTemperature(parsedValue, parsedUnit)) {
@@ -67,16 +69,19 @@ export function TemperatureConverter() {
         toUnit: 'all',
         fromValue: parsedValue,
         toValue: parsedValue,
-        method: smartParsed ? 'smart_input' : 'manual'
+        method: 'smart_input'
       });
     } else {
-      const numValue = parseFloat(value);
+      // Use the manually selected unit or parse as number
+      const numValue = smartParsed ? smartParsed.value : parseFloat(value);
+      const selectedUnit = userChangedUnit ? unit : (smartParsed ? smartParsed.unit : unit);
+      
       if (isNaN(numValue)) {
         setResult(null);
         return;
       }
 
-      if (!validateTemperature(numValue, unit)) {
+      if (!validateTemperature(numValue, selectedUnit)) {
         toast({
           title: "Invalid Temperature",
           description: "Temperature is below absolute zero or unreasonably high.",
@@ -85,18 +90,18 @@ export function TemperatureConverter() {
         return;
       }
 
-      const conversionResult = convertTemperature(numValue, unit);
+      const conversionResult = convertTemperature(numValue, selectedUnit);
       setResult(conversionResult);
 
       trackConversion({
-        fromUnit: unit,
+        fromUnit: selectedUnit,
         toUnit: 'all',
         fromValue: numValue,
         toValue: numValue,
-        method: 'manual'
+        method: userChangedUnit ? 'manual' : 'smart_input'
       });
     }
-  }, [toast]);
+  }, [toast, userChangedUnit]);
 
   // Improved debounce with 300ms delay
   useEffect(() => {
@@ -111,6 +116,13 @@ export function TemperatureConverter() {
     return () => clearTimeout(timer);
   }, [input, fromUnit, performConversion]);
 
+  const handleUnitChange = (newUnit: TemperatureUnit) => {
+    setFromUnit(newUnit);
+    setUserChangedUnit(true);
+    // Reset the flag after a short delay to allow smart input to work again
+    setTimeout(() => setUserChangedUnit(false), 1000);
+  };
+
   const handleCopy = (value: string) => {
     navigator.clipboard.writeText(value).then(() => {
       toast({
@@ -124,6 +136,7 @@ export function TemperatureConverter() {
   const handleClear = () => {
     setInput('');
     setResult(null);
+    setUserChangedUnit(false);
     inputRef.current?.focus();
     trackInteraction('clear_input');
   };
@@ -184,7 +197,7 @@ export function TemperatureConverter() {
             {/* Unit Selector */}
             <select 
               value={fromUnit} 
-              onChange={(e) => setFromUnit(e.target.value as TemperatureUnit)}
+              onChange={(e) => handleUnitChange(e.target.value as TemperatureUnit)}
               className="w-full px-4 py-3 border-2 rounded-lg bg-background text-base font-medium"
             >
               {units.map(unit => (
