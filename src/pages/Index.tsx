@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Thermometer, Github, Heart, Settings } from 'lucide-react';
-import { TemperatureConverter } from '@/components/TemperatureConverter';
+import { EnhancedTemperatureConverter } from '@/components/EnhancedTemperatureConverter';
 import { SEOHead } from '@/components/SEOHead';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { AdSlot } from '@/components/AdSlot';
@@ -53,7 +53,7 @@ const Index = () => {
             <AdSlot slotType="banner_top" className="mb-4" />
 
             {/* Converter Component */}
-            <TemperatureConverter />
+            <EnhancedTemperatureConverter />
 
             {/* In-content Ad */}
             <AdSlot slotType="in_content" className="mt-4" />
