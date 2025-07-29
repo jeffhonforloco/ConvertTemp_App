@@ -8,9 +8,9 @@ interface ConvertTempLogoProps {
 export const ConvertTempLogo: React.FC<ConvertTempLogoProps> = ({ className = "h-20 w-auto md:h-32" }) => {
   return (
     <div className={`flex items-center gap-4 ${className}`}>
-      {/* White Thermometer Icon */}
+      {/* Colorful Thermometer Icon */}
       <img 
-        src="/lovable-uploads/a96d02dd-a838-47a8-a6bb-8c65b5034a32.png" 
+        src="/lovable-uploads/b352bfa9-5aa1-453b-bc12-a3cc7f0f9403.png" 
         alt="Temperature Converter Icon"
         className="w-12 h-12 md:w-16 md:h-16"
       />
