@@ -267,10 +267,14 @@ export function EnhancedTemperatureConverter() {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <span className="cursor-help">{result.formatted[unitKey]}</span>
+                      <div className="flex items-center gap-1 cursor-help">
+                        <span>{result.formatted[unitKey]}</span>
+                        <HelpCircle className="w-3 h-3 opacity-60" />
+                      </div>
                     </TooltipTrigger>
                     <TooltipContent>
                       <p className="max-w-xs text-sm">
+                        <strong>Formula:</strong><br />
                         {getConversionFormula(fromUnit, unitAbbr as TemperatureUnit)}
                       </p>
                     </TooltipContent>
