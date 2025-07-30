@@ -51,6 +51,8 @@ export function EnhancedTemperatureConverter() {
   const [showHistory, setShowHistory] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [history, setHistory] = useState<ConversionHistory[]>([]);
+  const [conversionStats, setConversionStats] = useState({ count: 0, lastFrom: '', lastTo: '' });
+  const [defaultUnit, setDefaultUnit] = useState<TemperatureUnit>('C');
   const { toast } = useToast();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -59,9 +61,22 @@ export function EnhancedTemperatureConverter() {
     const savedAdvanced = localStorage.getItem('converttemp-advanced-units');
     const savedHistory = localStorage.getItem('converttemp-show-history');
     const savedHistoryData = localStorage.getItem('converttemp-history');
+    const savedDefaultUnit = localStorage.getItem('converttemp-default-unit');
+    const savedStats = localStorage.getItem('converttemp-session-stats');
     
     if (savedAdvanced) setShowAdvanced(JSON.parse(savedAdvanced));
     if (savedHistory) setShowHistory(JSON.parse(savedHistory));
+    if (savedDefaultUnit) {
+      setDefaultUnit(savedDefaultUnit as TemperatureUnit);
+      setFromUnit(savedDefaultUnit as TemperatureUnit);
+    }
+    if (savedStats) {
+      try {
+        setConversionStats(JSON.parse(savedStats));
+      } catch (e) {
+        console.error('Failed to parse stats data:', e);
+      }
+    }
     if (savedHistoryData) {
       try {
         setHistory(JSON.parse(savedHistoryData));
@@ -83,6 +98,14 @@ export function EnhancedTemperatureConverter() {
   useEffect(() => {
     localStorage.setItem('converttemp-history', JSON.stringify(history));
   }, [history]);
+
+  useEffect(() => {
+    localStorage.setItem('converttemp-default-unit', defaultUnit);
+  }, [defaultUnit]);
+
+  useEffect(() => {
+    localStorage.setItem('converttemp-session-stats', JSON.stringify(conversionStats));
+  }, [conversionStats]);
 
   const availableUnits = showAdvanced ? [...basicUnits, ...advancedUnits] : basicUnits;
 
@@ -124,6 +147,13 @@ export function EnhancedTemperatureConverter() {
       setResult(conversionResult);
       addToHistory(value, parsedUnit, conversionResult);
       
+      // Update conversion stats
+      setConversionStats(prev => ({
+        count: prev.count + 1,
+        lastFrom: getUnitSymbol(parsedUnit),
+        lastTo: 'all scales'
+      }));
+      
       // Update unit if smart input detected a different unit
       if (parsedUnit !== unit) {
         setFromUnit(parsedUnit);
@@ -163,6 +193,13 @@ export function EnhancedTemperatureConverter() {
       const conversionResult = convertTemperature(numValue, selectedUnit);
       setResult(conversionResult);
       addToHistory(value, selectedUnit, conversionResult);
+
+      // Update conversion stats
+      setConversionStats(prev => ({
+        count: prev.count + 1,
+        lastFrom: getUnitSymbol(selectedUnit),
+        lastTo: 'all scales'
+      }));
 
       trackConversion({
         fromUnit: selectedUnit,
@@ -313,6 +350,30 @@ export function EnhancedTemperatureConverter() {
             <CardContent className="p-4 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
+                  <Label htmlFor="default-unit">Default Unit</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Set your preferred starting unit
+                  </p>
+                </div>
+                <select 
+                  value={defaultUnit} 
+                  onChange={(e) => {
+                    const newUnit = e.target.value as TemperatureUnit;
+                    setDefaultUnit(newUnit);
+                    setFromUnit(newUnit);
+                  }}
+                  className="px-3 py-2 border rounded-md bg-background text-sm"
+                >
+                  {availableUnits.map(unit => (
+                    <option key={unit.value} value={unit.value}>
+                      {unit.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
                   <Label htmlFor="advanced-units">Advanced Units</Label>
                   <p className="text-sm text-muted-foreground">
                     Show Réaumur, Delisle, Newton, and Rømer scales
@@ -338,6 +399,21 @@ export function EnhancedTemperatureConverter() {
                   onCheckedChange={setShowHistory}
                 />
               </div>
+              
+              {/* Session Stats */}
+              {conversionStats.count > 0 && (
+                <div className="pt-4 border-t">
+                  <div className="text-sm text-muted-foreground mb-2">Session Stats</div>
+                  <div className="text-sm">
+                    You've converted <strong>{conversionStats.count}</strong> temperature{conversionStats.count !== 1 ? 's' : ''} this session
+                    {conversionStats.lastFrom && (
+                      <span className="block text-xs text-muted-foreground mt-1">
+                        Last: {conversionStats.lastFrom} → {conversionStats.lastTo}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </CollapsibleContent>

@@ -4,6 +4,7 @@ import { EnhancedTemperatureConverter } from '@/components/EnhancedTemperatureCo
 import { SEOHead } from '@/components/SEOHead';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { AdSlot } from '@/components/AdSlot';
+import { BannerAd, RemoveAdsButton } from '@/components/AdSenseAd';
 import { AdminDashboard } from '@/components/AdminDashboard';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -50,7 +51,10 @@ const Index = () => {
         {!showAdmin ? (
           <div className="w-full max-w-md space-y-8">
             {/* Top Banner Ad */}
-            <AdSlot slotType="banner_top" className="mb-4" />
+            <BannerAd className="mb-4" />
+            
+            {/* Remove Ads Button */}
+            <RemoveAdsButton />
 
             {/* Converter Component */}
             <EnhancedTemperatureConverter />
@@ -147,7 +151,7 @@ const Index = () => {
       </main>
 
       {/* Bottom Banner Ad */}
-      {!showAdmin && <AdSlot slotType="banner_bottom" className="mt-16" />}
+      {!showAdmin && <BannerAd className="mt-16" />}
 
       {/* Footer */}
       {!showAdmin && (
