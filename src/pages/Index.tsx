@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Thermometer, Github, Heart, Settings } from 'lucide-react';
+import { Thermometer, Github, Heart, Settings, User } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { EnhancedTemperatureConverter } from '@/components/EnhancedTemperatureConverter';
 import { SEOHead } from '@/components/SEOHead';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { AdSlot } from '@/components/AdSlot';
 import { BannerAd, RemoveAdsButton } from '@/components/AdSenseAd';
+import { SubscriptionManager } from '@/components/PaymentModal';
 import { AdminDashboard } from '@/components/AdminDashboard';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -13,7 +15,7 @@ import { ConvertTempLogo } from '@/components/ConvertTempLogo';
 
 const Index = () => {
   const [showAdmin, setShowAdmin] = useState(false);
-  const { isAdmin } = useAuth();
+  const { isAdmin, user } = useAuth();
 
   useEffect(() => {
     trackPageView('homepage');
@@ -30,6 +32,14 @@ const Index = () => {
             <ConvertTempLogo className="h-16 w-auto md:h-20 transition-all duration-300" />
           </div>
           <div className="flex items-center gap-2">
+            {!user && (
+              <Link to="/auth">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <User className="w-4 h-4" />
+                  Sign In
+                </Button>
+              </Link>
+            )}
             <ThemeToggle />
             {isAdmin && (
               <Button
@@ -55,6 +65,9 @@ const Index = () => {
             
             {/* Remove Ads Button */}
             <RemoveAdsButton />
+
+            {/* Subscription Manager for authenticated users */}
+            {user && <SubscriptionManager />}
 
             {/* Converter Component */}
             <EnhancedTemperatureConverter />

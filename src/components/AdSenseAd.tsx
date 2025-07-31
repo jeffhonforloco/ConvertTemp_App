@@ -1,4 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { PaymentModal } from '@/components/PaymentModal';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AdSenseAdProps {
   adSlot: string;
@@ -8,9 +12,26 @@ interface AdSenseAdProps {
   className?: string;
 }
 
-// Check if user has purchased ad removal
-const hasRemovedAds = () => {
-  return localStorage.getItem('converttemp-ads-removed') === 'true';
+// Check premium status from multiple sources
+const checkPremiumStatus = async (userEmail?: string) => {
+  // Check localStorage first (for guests)
+  const localAdRemoval = localStorage.getItem('converttemp-ads-removed') === 'true';
+  if (localAdRemoval) return true;
+
+  // Check Supabase for authenticated users
+  if (userEmail) {
+    try {
+      const { data } = await supabase.functions.invoke('check-subscription', {
+        body: { email: userEmail }
+      });
+      return data?.has_premium || false;
+    } catch (error) {
+      console.error('Error checking subscription:', error);
+      return false;
+    }
+  }
+
+  return false;
 };
 
 export function AdSenseAd({ 
@@ -20,8 +41,20 @@ export function AdSenseAd({
   style = {},
   className = '' 
 }: AdSenseAdProps) {
-  // Don't show ads if user has removed them
-  if (hasRemovedAds()) {
+  const [showAd, setShowAd] = useState(true);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const checkAds = async () => {
+      const hasPremium = await checkPremiumStatus(user?.email);
+      setShowAd(!hasPremium);
+    };
+    
+    checkAds();
+  }, [user?.email]);
+
+  // Don't show ads if user has premium
+  if (!showAd) {
     return null;
   }
 
@@ -76,40 +109,63 @@ export function BannerAd({ className = '', style = {} }: { className?: string; s
   );
 }
 
-// Remove ads button component
+// Remove ads button component with new payment modal
 export function RemoveAdsButton() {
-  const handleRemoveAds = async () => {
-    // This will redirect to Stripe checkout
-    // For now, we'll simulate the purchase for demo purposes
-    if (confirm('This will redirect you to payment. Continue?')) {
-      // TODO: Implement Stripe checkout here
-      alert('Stripe integration coming soon! For demo: ads removed locally.');
-      localStorage.setItem('converttemp-ads-removed', 'true');
-      window.location.reload();
-    }
-  };
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [hasPremium, setHasPremium] = useState(false);
+  const { user } = useAuth();
 
-  // Don't show button if ads are already removed
-  if (hasRemovedAds()) {
+  useEffect(() => {
+    const checkStatus = async () => {
+      const premium = await checkPremiumStatus(user?.email);
+      setHasPremium(premium);
+    };
+    
+    checkStatus();
+
+    // Listen for URL changes (payment success)
+    const handleUrlChange = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('payment') === 'success') {
+        setTimeout(checkStatus, 1000); // Delay to allow Stripe webhook to process
+      }
+    };
+
+    window.addEventListener('popstate', handleUrlChange);
+    handleUrlChange(); // Check on mount
+
+    return () => window.removeEventListener('popstate', handleUrlChange);
+  }, [user?.email]);
+
+  // Show success message if user has premium
+  if (hasPremium) {
     return (
       <div className="text-center p-4 bg-green-50 border border-green-200 rounded-lg">
         <p className="text-green-800 font-medium">✨ You're enjoying an ad-free experience!</p>
+        <p className="text-green-600 text-sm">Thank you for supporting ConvertTemp!</p>
       </div>
     );
   }
 
   return (
-    <div className="text-center p-4 bg-blue-50 border border-blue-200 rounded-lg">
-      <h3 className="font-semibold text-blue-900 mb-2">Enjoying ConvertTemp?</h3>
-      <p className="text-blue-700 text-sm mb-3">
-        Remove ads and support the development for just $2.99
-      </p>
-      <button
-        onClick={handleRemoveAds}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-      >
-        Remove Ads Forever
-      </button>
-    </div>
+    <>
+      <div className="text-center p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <h3 className="font-semibold text-blue-900 mb-2">Enjoying ConvertTemp?</h3>
+        <p className="text-blue-700 text-sm mb-3">
+          Remove ads and support development
+        </p>
+        <Button
+          onClick={() => setShowPaymentModal(true)}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+        >
+          Remove Ads
+        </Button>
+      </div>
+
+      <PaymentModal 
+        isOpen={showPaymentModal} 
+        onClose={() => setShowPaymentModal(false)} 
+      />
+    </>
   );
 }
