@@ -36,34 +36,42 @@ export const SEOHead = () => {
     "mainEntity": [
       {
         "@type": "Question",
-        "name": "How do you convert Celsius to Fahrenheit?",
+        "name": "How does ConvertTemp calculate temperature conversions?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "To convert Celsius to Fahrenheit, use the formula: °F = (°C × 9/5) + 32. For example, 25°C = (25 × 9/5) + 32 = 77°F"
-        }
-      },
-      {
-        "@type": "Question", 
-        "name": "How do you convert Fahrenheit to Celsius?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "To convert Fahrenheit to Celsius, use the formula: °C = (°F - 32) × 5/9. For example, 77°F = (77 - 32) × 5/9 = 25°C"
+          "text": "ConvertTemp uses standard mathematical formulas: Celsius to Fahrenheit (°F = °C × 9/5 + 32), Fahrenheit to Celsius (°C = (°F - 32) × 5/9), and Kelvin conversions (K = °C + 273.15). All calculations are performed instantly with high precision."
         }
       },
       {
         "@type": "Question",
-        "name": "What is the formula for Kelvin conversion?",
+        "name": "Is ConvertTemp accurate for scientific use?",
         "acceptedAnswer": {
-          "@type": "Answer", 
-          "text": "Kelvin conversions: K = °C + 273.15 (Celsius to Kelvin) and °C = K - 273.15 (Kelvin to Celsius). Absolute zero is 0K = -273.15°C"
+          "@type": "Answer",
+          "text": "Yes, ConvertTemp provides scientifically accurate temperature conversions using standard formulas. The tool maintains precision to multiple decimal places, making it suitable for educational and professional scientific applications."
         }
       },
       {
         "@type": "Question",
-        "name": "What are common temperature reference points?",
+        "name": "Can I convert temperatures on mobile with ConvertTemp?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Key temperature references: Water freezes at 0°C/32°F, room temperature is 20°C/68°F, body temperature is 37°C/98.6°F, water boils at 100°C/212°F"
+          "text": "ConvertTemp is fully mobile-responsive and works seamlessly on smartphones and tablets. The interface adapts to touch screens for easy temperature input and instant conversion results on any device."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does ConvertTemp support Kelvin to Fahrenheit conversion?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, ConvertTemp supports direct Kelvin to Fahrenheit conversions using the formula °F = (K - 273.15) × 9/5 + 32. Simply select Kelvin as your input unit and view the Fahrenheit result instantly."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I quickly convert between Celsius, Fahrenheit, and Kelvin online?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Use ConvertTemp to instantly convert temperatures between Celsius, Fahrenheit, and Kelvin with a simple, accurate interface. Just enter your temperature value, select the input unit, and see all conversions immediately."
         }
       }
     ]
@@ -95,10 +103,10 @@ export const SEOHead = () => {
 
   return (
     <Helmet>
-      {/* Primary Meta Tags */}
-      <title>Free Temperature Converter - Celsius Fahrenheit Kelvin | ConvertTemp</title>
-      <meta name="title" content="Free Temperature Converter - Celsius Fahrenheit Kelvin | ConvertTemp" />
-      <meta name="description" content="Free online temperature converter for Celsius, Fahrenheit, Kelvin, Rankine conversions. Instant results with formulas. Perfect for students, engineers, cooking." />
+      {/* Primary Meta Tags - AI Overview Optimized */}
+      <title>Online Temperature Converter for Celsius, Fahrenheit, and Kelvin</title>
+      <meta name="title" content="Online Temperature Converter for Celsius, Fahrenheit, and Kelvin" />
+      <meta name="description" content="Instantly convert temperatures between Celsius, Fahrenheit, and Kelvin with ConvertTemp. Accurate, fast, and free online temperature conversion tool." />
       <meta name="keywords" content="temperature converter, celsius to fahrenheit, fahrenheit to celsius, kelvin converter, temperature conversion formula, free converter" />
       
       {/* AI Overview Optimization */}
