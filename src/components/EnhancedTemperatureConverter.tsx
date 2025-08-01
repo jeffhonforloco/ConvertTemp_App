@@ -295,19 +295,25 @@ export function EnhancedTemperatureConverter() {
                           unit === 'newton' ? 'N' : 'Ro';
           
           return (
-            <div key={unit} className="text-center">
-              <div className="text-sm font-medium opacity-90 mb-1 capitalize">
+            <div key={unit} className="text-center p-3 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
+              <div className="text-sm font-medium opacity-90 mb-2 capitalize text-white">
                 {unit === 'reaumur' ? 'Réaumur' : 
                  unit === 'romer' ? 'Rømer' : unit}
               </div>
-              <div className="text-lg font-bold flex items-center justify-center gap-2">
+              <div className="text-lg font-bold text-white mb-2">
+                {result.formatted[unitKey]}
+              </div>
+              <div className="flex items-center justify-center gap-2">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <div className="flex items-center gap-1 cursor-help">
-                        <span>{result.formatted[unitKey]}</span>
-                        <HelpCircle className="w-3 h-3 opacity-60" />
-                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0 hover:bg-white/20 text-white/80 hover:text-white"
+                      >
+                        <HelpCircle className="w-3 h-3" />
+                      </Button>
                     </TooltipTrigger>
                     <TooltipContent>
                       <p className="max-w-xs text-sm">
@@ -321,10 +327,10 @@ export function EnhancedTemperatureConverter() {
                   variant="ghost"
                   size="sm"
                   onClick={() => handleCopy(result.formatted[unitKey])}
-                  className="h-6 w-6 p-0 hover:bg-white/20 text-white"
+                  className="h-6 w-6 p-0 hover:bg-white/20 text-white/80 hover:text-white"
                   title={`Copy ${result.formatted[unitKey]}`}
                 >
-                  <Copy className="w-4 h-4" />
+                  <Copy className="w-3 h-3" />
                 </Button>
               </div>
             </div>
@@ -336,97 +342,21 @@ export function EnhancedTemperatureConverter() {
 
   return (
     <div className="w-full max-w-md mx-auto space-y-6">
-      {/* Settings Panel */}
-      <Collapsible open={showSettings} onOpenChange={setShowSettings}>
-        <CollapsibleTrigger asChild>
-          <Button variant="outline" className="w-full flex items-center gap-2">
-            <Settings className="w-4 h-4" />
-            Settings
-            <ChevronDown className={`w-4 h-4 transition-transform ${showSettings ? 'rotate-180' : ''}`} />
-          </Button>
-        </CollapsibleTrigger>
-        <CollapsibleContent className="space-y-4 mt-4">
-          <Card>
-            <CardContent className="p-4 space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <Label htmlFor="default-unit">Default Unit</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Set your preferred starting unit
-                  </p>
-                </div>
-                <select 
-                  value={defaultUnit} 
-                  onChange={(e) => {
-                    const newUnit = e.target.value as TemperatureUnit;
-                    setDefaultUnit(newUnit);
-                    setFromUnit(newUnit);
-                  }}
-                  className="px-3 py-2 border rounded-md bg-background text-sm"
-                >
-                  {availableUnits.map(unit => (
-                    <option key={unit.value} value={unit.value}>
-                      {unit.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <Label htmlFor="advanced-units">Advanced Units</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Show Réaumur, Delisle, Newton, and Rømer scales
-                  </p>
-                </div>
-                <Switch
-                  id="advanced-units"
-                  checked={showAdvanced}
-                  onCheckedChange={setShowAdvanced}
-                />
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <Label htmlFor="show-history">Conversion History</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Keep track of recent conversions
-                  </p>
-                </div>
-                <Switch
-                  id="show-history"
-                  checked={showHistory}
-                  onCheckedChange={setShowHistory}
-                />
-              </div>
-              
-              {/* Session Stats */}
-              {conversionStats.count > 0 && (
-                <div className="pt-4 border-t">
-                  <div className="text-sm text-muted-foreground mb-2">Session Stats</div>
-                  <div className="text-sm">
-                    You've converted <strong>{conversionStats.count}</strong> temperature{conversionStats.count !== 1 ? 's' : ''} this session
-                    {conversionStats.lastFrom && (
-                      <span className="block text-xs text-muted-foreground mt-1">
-                        Last: {conversionStats.lastFrom} → {conversionStats.lastTo}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </CollapsibleContent>
-      </Collapsible>
-
       {/* Main Converter Card */}
       <Card className="bg-background/95 backdrop-blur-sm border shadow-lg">
         <CardContent className="p-6">
-          {/* Header */}
+          {/* Header with Settings */}
           <div className="text-center mb-6">
             <div className="flex items-center justify-center gap-2 mb-2">
               <Thermometer className="w-6 h-6 text-primary" />
               <h2 className="text-xl font-bold">Temperature Converter</h2>
+              <Collapsible open={showSettings} onOpenChange={setShowSettings}>
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <Settings className="w-4 h-4" />
+                  </Button>
+                </CollapsibleTrigger>
+              </Collapsible>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -447,6 +377,82 @@ export function EnhancedTemperatureConverter() {
               Convert between {showAdvanced ? '8 different' : '4 common'} temperature scales
             </p>
           </div>
+
+          {/* Settings Panel */}
+          <Collapsible open={showSettings} onOpenChange={setShowSettings}>
+            <CollapsibleContent className="space-y-4 mb-6">
+              <Card className="border-dashed">
+                <CardContent className="p-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <Label htmlFor="default-unit">Default Unit</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Set your preferred starting unit
+                      </p>
+                    </div>
+                    <select 
+                      value={defaultUnit} 
+                      onChange={(e) => {
+                        const newUnit = e.target.value as TemperatureUnit;
+                        setDefaultUnit(newUnit);
+                        setFromUnit(newUnit);
+                      }}
+                      className="px-3 py-2 border rounded-md bg-background text-sm"
+                    >
+                      {availableUnits.map(unit => (
+                        <option key={unit.value} value={unit.value}>
+                          {unit.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <Label htmlFor="advanced-units">Advanced Units</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Show Réaumur, Delisle, Newton, and Rømer scales
+                      </p>
+                    </div>
+                    <Switch
+                      id="advanced-units"
+                      checked={showAdvanced}
+                      onCheckedChange={setShowAdvanced}
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <Label htmlFor="show-history">Conversion History</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Keep track of recent conversions
+                      </p>
+                    </div>
+                    <Switch
+                      id="show-history"
+                      checked={showHistory}
+                      onCheckedChange={setShowHistory}
+                    />
+                  </div>
+                  
+                  {/* Session Stats */}
+                  {conversionStats.count > 0 && (
+                    <div className="pt-4 border-t">
+                      <div className="text-sm text-muted-foreground mb-2">Session Stats</div>
+                      <div className="text-sm">
+                        You've converted <strong>{conversionStats.count}</strong> temperature{conversionStats.count !== 1 ? 's' : ''} this session
+                        {conversionStats.lastFrom && (
+                          <span className="block text-xs text-muted-foreground mt-1">
+                            Last: {conversionStats.lastFrom} → {conversionStats.lastTo}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </CollapsibleContent>
+          </Collapsible>
 
           {/* Input Section */}
           <div className="space-y-4">
