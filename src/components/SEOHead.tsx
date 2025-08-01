@@ -1,28 +1,32 @@
 import { Helmet } from 'react-helmet-async';
 
 export const SEOHead = () => {
+  // Quick Answer for AI Overviews
+  const quickAnswer = "Use ConvertTemp to instantly convert temperatures between Celsius, Fahrenheit, and Kelvin with a simple, accurate interface. Enter any temperature value and get immediate conversions to all temperature scales with precise mathematical formulas.";
+
   const structuredData = {
     "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "ConvertTemp - Free Temperature Converter",
-    "description": "Free online temperature converter supporting Celsius, Fahrenheit, Kelvin, Rankine, and more. Instant conversions with formulas and explanations.",
-    "url": "https://converttemp.com",
+    "@type": "SoftwareApplication",
+    "name": "ConvertTemp - Temperature Converter",
+    "description": "Free online temperature converter for Celsius, Fahrenheit, and Kelvin conversions with instant results and accurate formulas.",
+    "url": "https://www.converttemp.com",
     "applicationCategory": "UtilityApplication",
     "operatingSystem": "Any",
+    "browserRequirements": "Any modern web browser",
     "offers": {
       "@type": "Offer",
       "price": "0",
       "priceCurrency": "USD"
     },
     "featureList": [
-      "Convert Celsius to Fahrenheit",
-      "Convert Fahrenheit to Celsius", 
-      "Kelvin temperature conversion",
-      "Rankine temperature conversion",
-      "Smart unit detection",
-      "Instant results",
-      "Mobile friendly",
-      "Works offline"
+      "Celsius to Fahrenheit conversion",
+      "Fahrenheit to Celsius conversion", 
+      "Kelvin temperature conversions",
+      "Rankine temperature support",
+      "Instant calculation results",
+      "Mobile responsive design",
+      "No registration required",
+      "Scientific accuracy"
     ],
     "creator": {
       "@type": "Organization",
@@ -104,9 +108,12 @@ export const SEOHead = () => {
   return (
     <Helmet>
       {/* Primary Meta Tags - AI Overview Optimized */}
-      <title>Online Temperature Converter for Celsius, Fahrenheit, and Kelvin</title>
-      <meta name="title" content="Online Temperature Converter for Celsius, Fahrenheit, and Kelvin" />
+      <title>ConvertTemp: Temperature Converter | Celsius Fahrenheit Kelvin</title>
+      <meta name="title" content="ConvertTemp: Temperature Converter | Celsius Fahrenheit Kelvin" />
       <meta name="description" content="Instantly convert temperatures between Celsius, Fahrenheit, and Kelvin with ConvertTemp. Accurate, fast, and free online temperature conversion tool." />
+      
+      {/* Quick Answer for AI Overviews */}
+      <meta name="AI-overview-answer" content={quickAnswer} />
       <meta name="keywords" content="temperature converter, celsius to fahrenheit, fahrenheit to celsius, kelvin converter, temperature conversion formula, free converter" />
       
       {/* AI Overview Optimization */}
