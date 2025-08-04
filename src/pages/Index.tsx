@@ -29,17 +29,17 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Main Content - Centered */}
-      <main className="flex-1 flex flex-col items-center justify-center container mx-auto px-4 py-8">
-        <div className="w-full max-w-md space-y-8">
+      {/* Main Content - Mobile Optimized */}
+      <main className="flex-1 container mx-auto px-4 py-4 md:py-8">
+        <div className="w-full max-w-md mx-auto space-y-4 md:space-y-8">
           {/* Top Banner Ad */}
-          <BannerAd className="mb-4" />
+          <BannerAd className="mb-2 md:mb-4" />
 
           {/* Converter Component */}
           <EnhancedTemperatureConverter />
 
           {/* In-content Ad */}
-          <AdSlot slotType="in_content" className="mt-4" />
+          <AdSlot slotType="in_content" className="mt-2 md:mt-4" />
         </div>
 
         {/* AI-Optimized FAQ Section for AI Overviews */}
