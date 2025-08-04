@@ -14,7 +14,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-hero flex flex-col">
+    <div className="min-h-screen bg-gradient-hero">
       <SEOHead />
       
       {/* Header */}
@@ -30,7 +30,7 @@ const Index = () => {
       </header>
 
       {/* Main Content - Mobile Optimized */}
-      <main className="flex-1 container mx-auto px-4 py-4 md:py-8">
+      <main className="container mx-auto px-4 pt-2 pb-4 md:pt-8 md:pb-8">
         <div className="w-full max-w-md mx-auto space-y-4 md:space-y-8">
           {/* Top Banner Ad */}
           <BannerAd className="mb-2 md:mb-4" />
@@ -42,8 +42,8 @@ const Index = () => {
           <AdSlot slotType="in_content" className="mt-2 md:mt-4" />
         </div>
 
-        {/* AI-Optimized FAQ Section for AI Overviews */}
-        <div className="mt-16 max-w-4xl mx-auto space-y-12">
+        {/* AI-Optimized FAQ Section for AI Overviews - Hidden on Mobile */}
+        <div className="hidden md:block mt-16 max-w-4xl mx-auto space-y-12">
           <div className="text-center">
             <h2 className="text-3xl font-bold mb-4">Temperature Conversion Questions & Answers</h2>
             <p className="text-muted-foreground">Everything you need to know about converting temperatures</p>
@@ -142,8 +142,8 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Feature Highlights */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
+        {/* Feature Highlights - Hidden on Mobile */}
+        <div className="hidden md:block mt-16 grid grid-cols-1 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
           <div className="text-center p-6 animate-fade-in">
             <div className="w-12 h-12 bg-gradient-cold rounded-full flex items-center justify-center mx-auto mb-4 hover-scale animate-pulse">
               <Zap className="w-6 h-6 text-white" />
@@ -185,8 +185,8 @@ const Index = () => {
           </div>
         </div>
 
-        {/* AI-Optimized How-To Section */}
-        <div className="mt-16 max-w-4xl mx-auto">
+        {/* AI-Optimized How-To Section - Hidden on Mobile */}
+        <div className="hidden md:block mt-16 max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-8">How to Use the Temperature Converter</h2>
           <div className="grid md:grid-cols-3 gap-6">
             <div className="text-center p-6 bg-background/30 rounded-lg border">
