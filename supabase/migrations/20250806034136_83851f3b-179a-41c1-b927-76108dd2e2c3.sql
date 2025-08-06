@@ -1,0 +1,36 @@
+-- Create admin user properly using Supabase auth
+INSERT INTO auth.users (
+  id,
+  instance_id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  created_at,
+  updated_at,
+  raw_app_meta_data,
+  raw_user_meta_data,
+  is_super_admin,
+  role,
+  aud,
+  confirmation_token,
+  email_change_token_current,
+  email_change_token_new,
+  recovery_token
+) VALUES (
+  gen_random_uuid(),
+  '00000000-0000-0000-0000-000000000000',
+  'admin@converttemp.com',
+  crypt('admin123', gen_salt('bf')),
+  now(),
+  now(),
+  now(),
+  '{"provider": "email", "providers": ["email"]}',
+  '{"full_name": "Admin User"}',
+  false,
+  'authenticated',
+  'authenticated',
+  '',
+  '',
+  '',
+  ''
+);
