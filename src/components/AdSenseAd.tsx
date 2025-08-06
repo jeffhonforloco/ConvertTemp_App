@@ -58,8 +58,8 @@ export function AdSenseAd({
 export function BannerAd({ className = '', style = {} }: { className?: string; style?: React.CSSProperties }) {
   return (
     <AdSenseAd
-      adSlot="1234567890"
-      adFormat="banner"
+      adSlot="8334850584"
+      adFormat="auto"
       className={`banner-ad ${className}`}
       style={{ minHeight: '90px', ...style }}
     />
