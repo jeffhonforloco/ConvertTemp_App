@@ -21,7 +21,7 @@ export function AdSenseAd({
       if (!document.querySelector('script[src*="adsbygoogle"]')) {
         const script = document.createElement('script');
         script.async = true;
-        script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_PUBLISHER_ID';
+        script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1429920113100814';
         script.crossOrigin = 'anonymous';
         document.head.appendChild(script);
       }
@@ -45,7 +45,7 @@ export function AdSenseAd({
       <ins 
         className="adsbygoogle"
         style={{ display: 'block', ...style }}
-        data-ad-client="ca-pub-YOUR_PUBLISHER_ID"
+        data-ad-client="ca-pub-1429920113100814"
         data-ad-slot={adSlot}
         data-ad-format={adFormat}
         data-full-width-responsive={fullWidthResponsive}
@@ -58,7 +58,7 @@ export function AdSenseAd({
 export function BannerAd({ className = '', style = {} }: { className?: string; style?: React.CSSProperties }) {
   return (
     <AdSenseAd
-      adSlot="YOUR_BANNER_AD_SLOT"
+      adSlot="1234567890"
       adFormat="banner"
       className={`banner-ad ${className}`}
       style={{ minHeight: '90px', ...style }}
